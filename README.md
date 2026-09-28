@@ -1,2 +1,2 @@
-# Otel-Rezervasyon-Sistemi
-KYZ205-Proje
+# Hotel Reservation System
+Başkent University - Hotel Reservation System
