@@ -1,0 +1,338 @@
+/* ==========================================================================
+   AURUM — suites.css
+   AŞAMA 4 (v2): Başlık + kart destesi ÜSTTE · Olanaklar bandı ALTTA
+   --------------------------------------------------------------------------
+   Kart iç düzeni: üst %62 görsel, alt %38 antrasit bilgi alanı.
+   Kartlara transform YAZILMAZ (GSAP'ın yelpaze animasyonu onu sürüyor);
+   hover derinliği gölge/kenarlık ve iç görselin zoom'u ile verilir.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. BÖLÜM VE BAŞLIK
+   ========================================================================== */
+.suites {
+  background-color: var(--bg-900);
+  overflow: hidden;               /* Açılan kartlar yatay scroll yaratmasın */
+}
+
+/* Yan başlık: ortalı değil, kart destesinin solunda hizalı blok.
+   Sağında "Tümünü Gör" butonu, alt hizada durur. */
+.suites__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+  text-align: left;
+}
+.suites__head-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.75rem, 1.4vw, 1.1rem);
+}
+.suites__all { flex: none; }
+
+@media (max-width: 700px) {
+  .suites__head { flex-direction: column; align-items: flex-start; }
+}
+
+.suites__title { font-size: clamp(2.1rem, 4.4vw, 3.5rem); line-height: 1.1; }
+.suites__title .mask {
+  display: block;
+  padding-bottom: 0.14em;         /* Alt uzantılar kesilmesin */
+  margin-bottom: -0.14em;
+}
+
+
+/* ==========================================================================
+   2. KART DESTESİ (STAGE)
+   --------------------------------------------------------------------------
+   JS yoksa: normal 3 kolonlu grid (içerik tamamen erişilebilir).
+   JS varsa : üç kart AYNI grid hücresinde üst üste → merkezleme otomatik,
+              kapsayıcı yüksekliği karta göre kendiliğinden oluşur.
+   ========================================================================== */
+.suites__stage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+  justify-items: center;
+}
+
+.js .suites__stage {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.js .suite-card {
+  grid-area: 1 / 1;               /* Hepsi aynı hücrede = deste */
+  will-change: transform;
+}
+
+/* Deste görünümü: üç kart da DÜZ ve aynı boyutta, yalnızca z sırası farklı.
+   (Eğim ve ölçek farkı kaldırıldı — GSAP tarafı da buna göre.) */
+.js .suite-card:nth-child(1) { z-index: 1; }
+.js .suite-card:nth-child(2) { z-index: 3; }
+.js .suite-card:nth-child(3) { z-index: 2; }
+
+
+/* ==========================================================================
+   3. SÜİT KARTI — dikey dikdörtgen, %62 görsel / %38 bilgi
+   ========================================================================== */
+.suite-card {
+  position: relative;
+  /* Üç kart açıldığında kapsayıcıyı dolduracak genişlik
+     (JS tarafı açılma mesafesini bu genişliğe göre hesaplıyor). */
+  width: clamp(258px, 28vw, 400px);
+  /* Yükseklik sabit oranla değil, içerikten geliyor:
+     görsel (aşağıda) + bilgi alanı (içeriği kadar). */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--bg-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition:
+    box-shadow var(--dur-base) var(--ease-soft),
+    border-color var(--dur-base) var(--ease-soft);
+}
+/* DİKKAT: hover'da transform YOK — GSAP kartın transform'unu sürüyor. */
+.suite-card:hover,
+.suite-card:focus-within {
+  border-color: var(--glass-border-gold);
+  box-shadow: var(--shadow-lg), 0 0 40px -18px rgba(201, 169, 106, 0.55);
+}
+
+/* ---- 3.1 Görsel alanı (üst %62) ---- */
+.suite-card__media {
+  position: relative;
+  /* Görsel yüksekliği kart genişliğine bağlı: 4:3 oran.
+     Kart 400px olduğunda (1440px ve üstü) görsel tam 400×300 olur;
+     dar ekranlarda aynı oranla küçülür, orantı hiç bozulmaz.
+     Kartın toplam boyu = bu görsel + bilgi alanı (içeriği kadar). */
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--bg-700);
+}
+.suite-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Görsel kartın kendi transform'undan bağımsız → çakışma yok */
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+.suite-card:hover .suite-card__media img { transform: scale(1.05); }
+
+/* Görselin altını bilgi alanına bağlayan yumuşak geçiş */
+.suite-card__media::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 38%;
+  background: linear-gradient(to top, var(--bg-800), transparent);
+  pointer-events: none;
+}
+
+/* ---- 3.2 Bilgi alanı (alt %38) ---- */
+.suite-card__body {
+  /* İçeriği kadar yer kaplar: artan boşluk kalmadığı için yazının
+     çerçeveye dikey uzaklığı doğrudan padding'e eşit olur (30px). */
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-block: 30px;
+  padding-inline: clamp(1rem, 1.6vw, 1.4rem);
+  background-color: var(--bg-800);
+}
+
+.suite-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.suite-card__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--text-primary);
+}
+
+/* Kısa açıklama — daha küçük ve ince */
+.suite-card__desc {
+  margin: 0;
+  max-width: none;
+  font-size: var(--fs-caption);
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.suite-card__price {
+  margin: 0;
+  max-width: none;
+  margin-top: 0.15rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--gold-300);
+}
+.suite-card__price span {
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ---- 3.3 Yuvarlak ok butonu (sağ alt) ---- */
+.suite-card__action {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(40px, 3vw, 46px);
+  aspect-ratio: 1;
+  border: 1px solid var(--line-gold);
+  border-radius: 50%;
+  color: var(--gold-500);
+  background-color: transparent;
+  transition:
+    background-color var(--dur-fast) var(--ease-soft),
+    color var(--dur-fast) var(--ease-soft),
+    border-color var(--dur-fast) var(--ease-soft);
+}
+.suite-card__action svg { width: 17px; height: 17px; display: block; }
+
+/* Hover: içi altınla dolar, ok koyulaşır */
+.suite-card__action:hover,
+.suite-card__action:focus-visible,
+.suite-card:hover .suite-card__action {
+  background-color: var(--gold-500);
+  border-color: var(--gold-500);
+  color: var(--text-on-gold);
+}
+
+/* Link tüm kartı tıklanabilir yapar (erişilebilir yöntem) */
+.suite-card__action::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+
+/* ==========================================================================
+   4. OLANAKLAR BANDI (kartların ALTINDA)
+   ========================================================================== */
+.amenities { margin-top: clamp(4rem, 8vw, 7rem); }
+
+.amenities__title {
+  margin-bottom: clamp(1.75rem, 3.5vw, 3rem);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.9vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;      /* Tamamı büyük harf */
+  text-align: center;
+  color: var(--text-primary);
+}
+
+/* ---- 4.1 Sonsuz kayan şerit ----
+   Kusursuz döngünün şartı: aynı liste N KEZ yan yana durur ve şerit tam
+   -(100/N)% kaydırılır. N = 3 (iki kopya 2K+ ekranlarda boşluk bırakıyordu).
+   Kopya sayısını değiştirirsen keyframe yüzdesini de değiştir.          */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(1.5rem, 2.6vw, 2.25rem);
+  /* İnce altın çizgilerle sınırlandırılmış alan */
+  border-block: 1px solid var(--line-gold);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-scroll 46s linear infinite;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-33.3333%, 0, 0); }   /* = 1 liste (3 kopya) */
+}
+
+.marquee__list {
+  display: flex;
+  align-items: flex-start;
+  flex: none;
+}
+
+/* ---- 4.2 Olanak bloğu: üstte ikon, altında isim ---- */
+.amenity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+  padding-inline: clamp(1.75rem, 4.5vw, 4rem);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.amenity__icon {
+  display: grid;
+  place-items: center;
+  color: var(--gold-500);         /* SVG stroke="currentColor" */
+}
+.amenity__icon svg {
+  width: clamp(30px, 3vw, 42px);
+  height: clamp(30px, 3vw, 42px);
+  display: block;
+}
+
+.amenity__label {
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244, 242, 238, 0.62);
+}
+
+
+/* ==========================================================================
+   5. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* JS yoksa 3 kolon sığmaz → alt alta */
+  .suites__stage { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .suite-card { width: min(78vw, 320px); }
+  .amenity__label { letter-spacing: 0.14em; }
+}
+
+
+/* ==========================================================================
+   6. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+  .marquee { overflow-x: auto; }          /* Elle kaydırılabilir kalsın */
+
+  /* Deste açılmayacağı için kartlar okunabilir bir dizilime döner */
+  .js .suites__stage {
+    grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+    gap: var(--space-lg);
+  }
+  .js .suite-card {
+    grid-area: auto;
+    transform: none !important;
+  }
+}

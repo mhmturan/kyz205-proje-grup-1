@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <!-- ===== Temel meta ===== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070708">
+  <meta name="color-scheme" content="dark">
+  <title>AURUM — Lüks Otel & Rezervasyon</title>
+  <meta name="description" content="Boğaz'a bakan lüks süitler, özel spa ve şef mutfağı. AURUM'da unutulmaz bir konaklama deneyimi için rezervasyonunuzu oluşturun.">
+
+  <!-- ===== Sosyal paylaşım (Open Graph) — görseller sonraki aşamada ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AURUM — Lüks Otel & Rezervasyon">
+  <meta property="og:description" content="Zamansız zarafet, modern konfor. AURUM Hotel.">
+  <!-- <meta property="og:image" content="assets/img/og-cover.jpg"> -->
+
+  <!-- ===== Favicon ===== -->
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <!-- ===== Google Fonts =====
+       Playfair Display : zarif serif başlıklar (400–700 + italic)
+       Inter            : temiz okunabilir gövde metni (300–600)          -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
+
+  <!-- ===== Stiller: global omurga + bölüm modülleri ===== -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/datepicker.css">
+  <link rel="stylesheet" href="css/heritage.css">
+  <link rel="stylesheet" href="css/suites.css">
+  <link rel="stylesheet" href="css/gallery.css">
+  <link rel="stylesheet" href="css/experiences.css">
+  <link rel="stylesheet" href="css/footer.css">
+
+  <!-- ===== Progressive enhancement bayrağı =====
+       JS çalışıyorsa <html>'e "js" class'ı eklenir; animasyonların gizli
+       başlangıç durumları (opacity:0) YALNIZCA o zaman uygulanır.        -->
+  <script>document.documentElement.classList.add('js');</script>
+
+  <!-- ===== GSAP + ScrollTrigger (CDN) ===== -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+
+<body>
+  <!-- Film greni — tüm sayfanın üzerinde ince doku katmanı -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <a class="skip-link" href="#heritage">İçeriğe atla</a>
+
+  <!-- ScrollSmoother iskeleti (ileride aktifleşecek; şimdilik şeffaf sarmal) -->
+  <!-- ==================================================================
+       HEADER — yapışkan cam navigasyon
+       Linkler tek sayfadaki bölümlere gider; hero videosu scroll'u
+       kilitlemişse tıklama önce girişi bitirir (js/main.js · initHeader).
+       ================================================================== -->
+  <header class="site-header" id="site-header">
+    <div class="container site-header__inner">
+
+      <!-- Logo, "AURUM" yazısını da içerdiği için ayrıca metin yazılmıyor;
+           erişilebilirlik alt metinle sağlanıyor. -->
+      <a class="brand" href="#hero" aria-label="AURUM — ana sayfa">
+        <img class="brand__logo" src="assets/img/logo.png"
+             width="360" height="202" alt="AURUM" decoding="async">
+      </a>
+
+      <!-- ---- Masaüstü menü ---- -->
+      <nav class="nav" aria-label="Ana menü">
+        <ul class="nav__list">
+          <li class="nav__item"><a class="nav__link" href="#hero">Anasayfa</a></li>
+          <li class="nav__item"><a class="nav__link" href="#heritage">Hakkımızda</a></li>
+          <li class="nav__item"><a class="nav__link" href="#suites">Odalar</a></li>
+
+          <li class="nav__item" data-dropdown>
+            <button class="nav__link" type="button"
+                    aria-expanded="false" aria-controls="menu-galeri" aria-haspopup="true">
+              Galeri
+              <svg class="nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="nav__submenu" id="menu-galeri">
+              <a class="nav__sublink" href="#gallery">İç Mekan</a>
+              <a class="nav__sublink" href="#gallery">Dış Mekan</a>
+              <a class="nav__sublink" href="#gallery">Havuz</a>
+            </div>
+          </li>
+
+          <li class="nav__item"><a class="nav__link" href="#experiences">Sıkça Sorulan Sorular</a></li>
+          <li class="nav__item"><a class="nav__link" href="#footer">İletişim</a></li>
+        </ul>
+      </nav>
+
+      <!-- ---- Sağ taraf ---- -->
+      <div class="header__actions">
+        <a class="header__phone" href="tel:+902125550100">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/>
+          </svg>
+          <span>+90 212 555 01 00</span>
+        </a>
+
+        <button class="header__burger" type="button" id="menu-toggle"
+                aria-label="Menüyü aç" aria-expanded="false" aria-controls="mobile-menu">
+          <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+          <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobil menü" aria-hidden="true">
+    <ul class="mobile-menu__list">
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="#hero">Anasayfa</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="#heritage">Hakkımızda</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="#suites">Odalar</a></li>
+
+      <li class="mobile-menu__item" data-dropdown>
+        <button class="mobile-menu__link" type="button"
+                aria-expanded="false" aria-controls="mobile-galeri">
+          Galeri
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+        <div class="mobile-menu__sublist" id="mobile-galeri">
+          <div>
+            <a class="mobile-menu__sublink" href="#gallery">İç Mekan</a>
+            <a class="mobile-menu__sublink" href="#gallery">Dış Mekan</a>
+            <a class="mobile-menu__sublink" href="#gallery">Havuz</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="#experiences">Sıkça Sorulan Sorular</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="#footer">İletişim</a></li>
+    </ul>
+
+    <div class="mobile-menu__footer">
+      <a class="mobile-menu__phone" href="tel:+902125550100">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/>
+        </svg>
+        <span>+90 212 555 01 00</span>
+      </a>
+      <a class="btn btn--gold btn--block" href="#booking-form">
+        Hemen Rezervasyon Yap
+        <span class="btn__icon" aria-hidden="true">&#8594;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ==================================================================
+       REZERVASYON PANELLERİ — bilinçli olarak GÖVDE seviyesinde
+       #smooth-content bir yığın bağlamı (stacking context) açtığı için
+       içeride kalan panel header dahil hiçbir şeyin önüne geçemiyordu.
+       Burada position:fixed + yüksek z-index ile her şeyin üstündeler;
+       konumlarını JS, ilgili alanın koordinatından hesaplıyor.
+       ================================================================== -->
+  <!-- Destinasyon: serbest yazı yok, yalnızca bu listeden seçilir.
+       Liste her açılışta TAMAMEN görünür (filtrelenmez). -->
+  <div class="bb-panel bb-panel--search" id="destination-panel" hidden>
+    <p class="bb-panel__title" id="destination-panel-title">Nerede kalmak istersiniz?</p>
+    <ul class="bb-sugg" id="destination-list" role="listbox"
+        aria-labelledby="destination-panel-title"></ul>
+  </div>
+
+  <!-- İki aylık aralık takvimi (JS doldurur) -->
+  <div class="bb-panel datepicker" id="date-panel" role="dialog"
+       aria-label="Konaklama tarihlerini seçin" hidden>
+  
+    <div class="datepicker__body">
+      <button class="datepicker__nav" type="button" data-month-step="-1"
+              aria-label="Önceki ay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+  
+      <div class="datepicker__months" id="datepicker-months"></div>
+  
+      <button class="datepicker__nav" type="button" data-month-step="1"
+              aria-label="Sonraki ay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </button>
+    </div>
+  
+    <div class="datepicker__footer">
+      <p class="datepicker__summary" id="datepicker-summary" aria-live="polite"></p>
+      <div class="datepicker__actions">
+        <button class="bb-link" type="button" id="datepicker-clear">Temizle</button>
+        <button class="btn btn--gold bb-done" type="button" id="datepicker-done">Tamam</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bb-panel bb-panel--guests" id="guests-panel" role="dialog"
+       aria-label="Misafir sayısı" hidden>
+  
+    <div class="stepper" data-stepper="adults">
+      <span class="stepper__label">Yetişkin</span>
+      <div class="stepper__ctrl">
+        <button class="stepper__btn" type="button" data-step="-1" aria-label="Yetişkin sayısını azalt">−</button>
+        <span class="stepper__value" data-count aria-live="polite">2</span>
+        <button class="stepper__btn" type="button" data-step="1" aria-label="Yetişkin sayısını artır">+</button>
+      </div>
+    </div>
+  
+    <div class="stepper" data-stepper="children">
+      <span class="stepper__label">Çocuk</span>
+      <div class="stepper__ctrl">
+        <button class="stepper__btn" type="button" data-step="-1" aria-label="Çocuk sayısını azalt">−</button>
+        <span class="stepper__value" data-count aria-live="polite">0</span>
+        <button class="stepper__btn" type="button" data-step="1" aria-label="Çocuk sayısını artır">+</button>
+      </div>
+    </div>
+  
+    <!-- Çocuk yaşları — çocuk sayısı 0'dan büyükse görünür -->
+    <div class="ages" id="guest-ages" hidden>
+      <p class="ages__title">Çocuk Yaşları</p>
+      <div class="ages__grid" id="guest-ages-grid"></div>
+    </div>
+  
+    <div class="bb-panel__footer">
+      <button class="bb-link" type="button" id="guests-reset">Sıfırla</button>
+      <button class="btn btn--gold bb-done" type="button" id="guests-done">Tamam</button>
+    </div>
+  </div>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main>
+
+        <!-- ================================================================
+             HERO — Scroll'a kilitli video sahne + UI katmanı
+             Sayfa açılışında scroll kilitlenir; tekerlek hareketi videoyu
+             kare kare sürer (scrub). Video bitince kilit açılır ve sayfa
+             normal akışına döner. Mantık: js/main.js · initVideoHero
+             ================================================================ -->
+        <section class="hero" id="hero">
+
+          <!-- ---- KATMAN 1: Video sahne (en altta) ---- -->
+          <div class="hero__scene" aria-hidden="true">
+
+            <!-- Scrub için tüm videonun inmesi gerekir → preload="auto".
+                 Kendi videonu koyarken yalnızca <source src> değişir. -->
+            <video class="hero__video" id="hero-video"
+                   muted playsinline preload="auto" tabindex="-1">
+              <source src="assets/video/hero.mp4" type="video/mp4">
+            </video>
+
+            <!-- Video üzerine binen, metni okunur kılan degrade perde -->
+            <div class="hero__veil"></div>
+          </div>
+
+          <!-- ---- KATMAN 2: UI (z-content) ---- -->
+          <div class="hero-ui">
+
+            <div class="hero-ui__content container">
+              <p class="overline overline--center hero__eyebrow" data-reveal="fade">
+                AURUM · Bosphorus Retreat
+              </p>
+
+              <h1 class="display hero__title">
+                <span class="mask"><span class="mask__inner">Zamanın</span></span>
+                <span class="mask"><span class="mask__inner"><em>yavaşladığı</em> yer</span></span>
+              </h1>
+
+              <p class="hero__sub text-lead" data-reveal>
+                Karmaşadan uzak, sadece size ve anı yaşamaya adanmış kusursuz bir deneyim.
+              </p>
+            </div>
+
+            <!-- ---- Glassmorphism rezervasyon çubuğu ----
+                 Üç alan: destinasyon · giriş-çıkış tarihi (tek kutu) · misafir.
+                 Gerçek değerler gizli input'larda tutulur; görünen kısımlar
+                 panelleri açan tetikleyicilerdir (js/main.js · initBookingBar). -->
+            <form class="booking-bar glass glass--gold glass--edge-light"
+                  id="booking-form" data-reveal novalidate>
+
+              <!-- ============ 1) Otel, şehir, bölge ============ -->
+              <div class="bb-field" data-bb-field="destination">
+                <span class="bb-label" id="bb-label-dest">Otel, Şehir, Bölge</span>
+                <button class="bb-control bb-trigger" type="button" id="destination-trigger"
+                        aria-haspopup="listbox" aria-expanded="false" aria-controls="destination-panel"
+                        aria-describedby="bb-label-dest">
+                  <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <span class="bb-value is-empty" id="destination-display">Nerde Kalmak İstiyorsunuz?</span>
+                  <svg class="bb-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+
+              </div>
+
+              <!-- ============ 2) Giriş – çıkış tarihi (tek kutu) ============ -->
+              <div class="bb-field" data-bb-field="dates">
+                <span class="bb-label" id="bb-label-dates">Giriş – Çıkış Tarihi</span>
+                <button class="bb-control bb-trigger" type="button" id="date-trigger"
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="date-panel"
+                        aria-describedby="bb-label-dates">
+                  <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="4.5" width="18" height="16" rx="2"/>
+                    <path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>
+                  </svg>
+                  <span class="bb-value" id="date-display">Tarih seçin</span>
+                  <span class="bb-nights" id="date-nights" hidden></span>
+                </button>
+
+              </div>
+
+              <!-- ============ 3) Misafir ============ -->
+              <div class="bb-field" data-bb-field="guests">
+                <span class="bb-label" id="bb-label-guests">Kişi Sayısı</span>
+                <button class="bb-control bb-trigger" type="button" id="guests-trigger"
+                        aria-haspopup="dialog" aria-expanded="false" aria-controls="guests-panel"
+                        aria-describedby="bb-label-guests">
+                  <svg class="bb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/>
+                    <path d="M3 18h18M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/>
+                    <path d="M8.5 10V8.5h7V10"/>
+                  </svg>
+                  <span class="bb-value" id="guests-display">2 Yetişkin</span>
+                </button>
+
+              </div>
+
+              <button class="btn btn--gold booking-bar__submit" type="submit">
+                Rezervasyon Yap
+                <span class="btn__icon" aria-hidden="true">&#8594;</span>
+              </button>
+
+              <!-- Sunucuya gidecek gerçek değerler -->
+              <input type="hidden" id="destination" name="destination">
+              <input type="hidden" id="check-in" name="check-in">
+              <input type="hidden" id="check-out" name="check-out">
+              <input type="hidden" id="guests" name="guests">
+              <input type="hidden" id="child-ages" name="child-ages">
+
+              <!-- Form geri bildirimi (JS doldurur) -->
+              <p class="booking-bar__feedback" role="status" aria-live="polite"></p>
+            </form>
+
+            <!-- Kaydırma ipucu — scrub başlayınca kaybolur -->
+            <div class="hero__cue" data-reveal="fade" aria-hidden="true">
+              <span class="hero__cue-text">Keşfet</span>
+              <span class="hero__cue-line"></span>
+            </div>
+
+          </div>
+
+          <!-- ---- KATMAN 3: Videonun sonunda beliren mesaj ---- -->
+          <div class="hero__tagline" aria-hidden="true">
+            <span>Avantajlı yaz fırsatlarını kaçırma</span>
+          </div>
+
+          <!-- Scrub ilerleme çizgisi (altın) -->
+          <div class="hero__progress" aria-hidden="true">
+            <span class="hero__progress-bar"></span>
+          </div>
+
+        </section>
+
+        <!-- ================================================================
+             MİRAS (HERITAGE) — ortalanmış cam panel
+             Sıra: panel belirir → sol kolon stagger → perde açılır → etiket
+             sıçrayarak yerine oturur. Tümü tek timeline (initHeritagePanel).
+             ================================================================ -->
+        <section class="section heritage" id="heritage">
+          <span class="glow-gold heritage__glow" aria-hidden="true"></span>
+
+          <div class="container">
+            <div class="heritage-panel" data-heritage-panel>
+
+              <!-- ---- Sol kolon: içerik ---- -->
+              <div class="heritage__content">
+
+                <h2 class="heritage__title">
+                  <span class="mask"><span class="mask__inner">Lüks ve misafirperverlik</span></span>
+                  <span class="mask"><span class="mask__inner">mirası</span></span>
+                </h2>
+
+                <!-- Satır kırılımları sabit. br.br-lg yalnızca geniş ekranda
+                     görünür; 900px altında gizlenir ve metin doğal akar. -->
+                <p class="heritage__text" data-reveal>
+                  1998'de Boğaz'ın sessiz bir koyunda, bir denizci konağının taş<br class="br-lg">
+                  duvarlarında başladık. Bugün üç kıtada 500 lüks odayla<br class="br-lg">
+                  aynı sözü sürdürüyoruz: her misafire sınırsız özen.
+                </p>
+
+                <!-- İstatistik satırı — ikonlar inline SVG (ek istek yok,
+                     currentColor ile altın rengi CSS'ten gelir) -->
+                <div class="heritage__stats" data-reveal>
+
+                  <div class="stat">
+                    <span class="stat__icon" aria-hidden="true">
+                      <!-- taç -->
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7l4.5 3.5L12 4l4.5 6.5L21 7l-1.8 11H4.8L3 7z"/>
+                        <path d="M4.8 18h14.4"/>
+                      </svg>
+                    </span>
+                    <p class="stat__text"><strong>28</strong> Yıllık Deneyim</p>
+                  </div>
+
+                  <div class="stat">
+                    <span class="stat__icon" aria-hidden="true">
+                      <!-- bina -->
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 21V5.5A1.5 1.5 0 0 1 5.5 4h7A1.5 1.5 0 0 1 14 5.5V21"/>
+                        <path d="M14 10h4.5A1.5 1.5 0 0 1 20 11.5V21"/>
+                        <path d="M2.5 21h19"/>
+                        <path d="M7 8h4M7 12h4M7 16h4M17 14h0M17 17.5h0"/>
+                      </svg>
+                    </span>
+                    <p class="stat__text"><strong>500</strong> Lüks Oda</p>
+                  </div>
+
+                </div>
+
+                <a class="btn btn--outline heritage__cta" href="#suites" data-reveal>
+                  Daha fazlasını keşfedin
+                  <span class="btn__icon" aria-hidden="true">&#8594;</span>
+                </a>
+
+              </div>
+
+              <!-- ---- Sağ kolon: görsel + yüzen etiket ----
+                   Etiket bilerek .heritage__media'nın DIŞINDA: içinde olsaydı
+                   overflow:hidden onu kırpardı.
+                   Kendi fotoğrafını koyarken yalnızca <img src> değişir.   -->
+              <div class="heritage__visual">
+
+                <figure class="heritage__media">
+                  <!-- eager: perde açılırken görselin hazır olması şart -->
+                  <img src="assets/img/heritage-placeholder.png"
+                       width="1254" height="1254" loading="eager" decoding="async"
+                       alt="AURUM'un kemerli pencerelerle aydınlanan tarihi lobisi">
+                  <span class="curtain" aria-hidden="true"></span>
+                </figure>
+
+                <div class="heritage__badge">
+                  <span class="heritage__badge-year">1998'den</span>
+                  <span class="heritage__badge-label">Beri</span>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             SÜİTLER — başlık + desteden açılan kartlar, ALTINDA olanaklar bandı
+             Kart tasarımı değişti; GSAP yelpaze mantığı aynen korunuyor.
+             ================================================================ -->
+        <section class="section suites" id="suites">
+          <div class="container">
+
+            <!-- Yan başlık: ortalı değil, sol kenara yaslı blok -->
+            <header class="suites__head" data-reveal-group>
+              <div class="suites__head-text">
+                <p class="overline" data-reveal="fade">Konaklama</p>
+                <h2 class="suites__title">
+                  <span class="mask"><span class="mask__inner">Özenle seçilmiş süitler</span></span>
+                </h2>
+              </div>
+
+              <!-- Tüm süit ve paketlerin listelendiği sayfaya gider -->
+              <a class="btn btn--outline suites__all" href="suitler.html" data-reveal>
+                Tümünü Gör
+                <span class="btn__icon" aria-hidden="true">&#8594;</span>
+              </a>
+            </header>
+
+            <!-- Kart destesi: DOM sırası = deste sırası (2. kart en üstte) -->
+            <div class="suites__stage" id="suites-stage">
+
+              <article class="suite-card">
+                <div class="suite-card__media">
+                  <img src="assets/img/suite-01.png" width="1254" height="1254"
+                       loading="lazy" decoding="async"
+                       alt="Executive Suite'in deniz manzaralı penceresi">
+                </div>
+                <div class="suite-card__body">
+                  <div class="suite-card__info">
+                    <h3 class="suite-card__name">Executive Suite</h3>
+                    <p class="suite-card__desc">Boğaz manzaralı · 68 m²</p>
+                    <p class="suite-card__price">14.999₺ <span>/ gece</span></p>
+                  </div>
+                  <a class="suite-card__action" href="suit-detay.html?suit=executive-suite"
+                     aria-label="Executive Suite'i incele">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  </a>
+                </div>
+              </article>
+
+              <article class="suite-card">
+                <div class="suite-card__media">
+                  <img src="assets/img/suite-02.png" width="1254" height="1254"
+                       loading="lazy" decoding="async"
+                       alt="Deluxe Suite'in kemerli penceresi ve şöminesi">
+                </div>
+                <div class="suite-card__body">
+                  <div class="suite-card__info">
+                    <h3 class="suite-card__name">Deluxe Suite</h3>
+                    <p class="suite-card__desc">Teras ve şömineli · 92 m²</p>
+                    <p class="suite-card__price">24.999₺ <span>/ gece</span></p>
+                  </div>
+                  <a class="suite-card__action" href="suit-detay.html?suit=deluxe-suite"
+                     aria-label="Deluxe Suite'i incele">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  </a>
+                </div>
+              </article>
+
+              <article class="suite-card">
+                <div class="suite-card__media">
+                  <img src="assets/img/suite-03.png" width="1254" height="1254"
+                       loading="lazy" decoding="async"
+                       alt="Royal Villa'nın özel sonsuzluk havuzu">
+                </div>
+                <div class="suite-card__body">
+                  <div class="suite-card__info">
+                    <h3 class="suite-card__name">Royal Villa</h3>
+                    <p class="suite-card__desc">Özel havuzlu · 140 m²</p>
+                    <p class="suite-card__price">39.999₺ <span>/ gece</span></p>
+                  </div>
+                  <a class="suite-card__action" href="suit-detay.html?suit=royal-villa"
+                     aria-label="Royal Villa'yı incele">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  </a>
+                </div>
+              </article>
+
+            </div>
+
+            <!-- ---- Olanaklar bandı (kartların altında) ----
+                 Liste ÜÇ kez basılır: şerit -%33.333 kaydığında bir sonraki
+                 kopya diğerinin yerine geçer, döngü dikişsiz olur.
+                 Kopyalar ekran okuyuculardan gizlenir.                  -->
+            <div class="amenities">
+              <h3 class="amenities__title" data-reveal>Dünya standartlarında olanaklar</h3>
+
+              <div class="marquee">
+                <div class="marquee__track">
+
+                  <ul class="marquee__list">
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 2v8a2.5 2.5 0 0 0 2.5 2.5h0V22"/><path d="M6 2v6M9 2v6"/>
+                          <path d="M17.5 2c-1.6 1.4-2.5 3.4-2.5 5.5s.9 3.6 2.5 4.5V22"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Restoran</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4 9h13v5.5A5.5 5.5 0 0 1 11.5 20h-2A5.5 5.5 0 0 1 4 14.5V9z"/>
+                          <path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3v2.5M12 3v2.5"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Kahve</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 21c0-6 2.5-9.5 0-15-2.5 5.5 0 9 0 15z"/>
+                          <path d="M12 21c-4 0-7-3-8-8 5 0 8 3 8 8z"/>
+                          <path d="M12 21c4 0 7-3 8-8-5 0-8 3-8 8z"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Spa</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="4" y="2.5" width="16" height="19" rx="2.5"/>
+                          <circle cx="12" cy="14" r="4.5"/><path d="M7.5 6.5h.01M11 6.5h.01"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Çamaşırhane</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 16c1.8 0 1.8 1.8 3.6 1.8S7.4 16 9.2 16s1.8 1.8 3.6 1.8S14.6 16 16.4 16s1.8 1.8 3.6 1.8"/>
+                          <path d="M2 20.2c1.8 0 1.8 1.8 3.6 1.8s1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8 1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8"/>
+                          <path d="M8 14V4.5A2.5 2.5 0 0 1 10.5 2M16 14V4.5A2.5 2.5 0 0 0 13.5 2"/><path d="M8 7.5h8"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Sonsuzluk Havuzu</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4.5 16.5h15M6 16.5l1.6-5.6A2.5 2.5 0 0 1 10 9h4a2.5 2.5 0 0 1 2.4 1.9l1.6 5.6"/>
+                          <circle cx="7.8" cy="18.6" r="1.6"/><circle cx="16.2" cy="18.6" r="1.6"/>
+                          <path d="M3.5 16.5v1.6M20.5 16.5v1.6"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">VIP Transfer</span>
+                    </li>
+                  </ul>
+
+                  <ul class="marquee__list" aria-hidden="true">
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 2v8a2.5 2.5 0 0 0 2.5 2.5h0V22"/><path d="M6 2v6M9 2v6"/>
+                          <path d="M17.5 2c-1.6 1.4-2.5 3.4-2.5 5.5s.9 3.6 2.5 4.5V22"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Restoran</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4 9h13v5.5A5.5 5.5 0 0 1 11.5 20h-2A5.5 5.5 0 0 1 4 14.5V9z"/>
+                          <path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3v2.5M12 3v2.5"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Kahve</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 21c0-6 2.5-9.5 0-15-2.5 5.5 0 9 0 15z"/>
+                          <path d="M12 21c-4 0-7-3-8-8 5 0 8 3 8 8z"/>
+                          <path d="M12 21c4 0 7-3 8-8-5 0-8 3-8 8z"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Spa</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="4" y="2.5" width="16" height="19" rx="2.5"/>
+                          <circle cx="12" cy="14" r="4.5"/><path d="M7.5 6.5h.01M11 6.5h.01"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Çamaşırhane</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 16c1.8 0 1.8 1.8 3.6 1.8S7.4 16 9.2 16s1.8 1.8 3.6 1.8S14.6 16 16.4 16s1.8 1.8 3.6 1.8"/>
+                          <path d="M2 20.2c1.8 0 1.8 1.8 3.6 1.8s1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8 1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8"/>
+                          <path d="M8 14V4.5A2.5 2.5 0 0 1 10.5 2M16 14V4.5A2.5 2.5 0 0 0 13.5 2"/><path d="M8 7.5h8"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Sonsuzluk Havuzu</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4.5 16.5h15M6 16.5l1.6-5.6A2.5 2.5 0 0 1 10 9h4a2.5 2.5 0 0 1 2.4 1.9l1.6 5.6"/>
+                          <circle cx="7.8" cy="18.6" r="1.6"/><circle cx="16.2" cy="18.6" r="1.6"/>
+                          <path d="M3.5 16.5v1.6M20.5 16.5v1.6"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">VIP Transfer</span>
+                    </li>
+                  </ul>
+
+                  <ul class="marquee__list" aria-hidden="true">
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M6 2v8a2.5 2.5 0 0 0 2.5 2.5h0V22"/><path d="M6 2v6M9 2v6"/>
+                          <path d="M17.5 2c-1.6 1.4-2.5 3.4-2.5 5.5s.9 3.6 2.5 4.5V22"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Restoran</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4 9h13v5.5A5.5 5.5 0 0 1 11.5 20h-2A5.5 5.5 0 0 1 4 14.5V9z"/>
+                          <path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3v2.5M12 3v2.5"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Kahve</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 21c0-6 2.5-9.5 0-15-2.5 5.5 0 9 0 15z"/>
+                          <path d="M12 21c-4 0-7-3-8-8 5 0 8 3 8 8z"/>
+                          <path d="M12 21c4 0 7-3 8-8-5 0-8 3-8 8z"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Spa</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="4" y="2.5" width="16" height="19" rx="2.5"/>
+                          <circle cx="12" cy="14" r="4.5"/><path d="M7.5 6.5h.01M11 6.5h.01"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Çamaşırhane</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M2 16c1.8 0 1.8 1.8 3.6 1.8S7.4 16 9.2 16s1.8 1.8 3.6 1.8S14.6 16 16.4 16s1.8 1.8 3.6 1.8"/>
+                          <path d="M2 20.2c1.8 0 1.8 1.8 3.6 1.8s1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8 1.8-1.8 3.6-1.8 1.8 1.8 3.6 1.8"/>
+                          <path d="M8 14V4.5A2.5 2.5 0 0 1 10.5 2M16 14V4.5A2.5 2.5 0 0 0 13.5 2"/><path d="M8 7.5h8"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">Sonsuzluk Havuzu</span>
+                    </li>
+                    <li class="amenity">
+                      <span class="amenity__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M4.5 16.5h15M6 16.5l1.6-5.6A2.5 2.5 0 0 1 10 9h4a2.5 2.5 0 0 1 2.4 1.9l1.6 5.6"/>
+                          <circle cx="7.8" cy="18.6" r="1.6"/><circle cx="16.2" cy="18.6" r="1.6"/>
+                          <path d="M3.5 16.5v1.6M20.5 16.5v1.6"/>
+                        </svg>
+                      </span>
+                      <span class="amenity__label">VIP Transfer</span>
+                    </li>
+                  </ul>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================================================================
+             GALERİ — sticky metin + ana görselin içinden çıkan asimetrik ızgara
+             Görsel 1 ve 2 başta Görsel 3'ün tam arkasında gizli durur;
+             scroll ile (scrub) sola-yukarı ve sola-aşağı kayarak ızgaradaki
+             nihai yerlerine oturur. Hesap js/main.js · initGalleryStack.
+             ================================================================ -->
+        <section class="section gallery" id="gallery">
+          <div class="container">
+            <div class="gallery__grid">
+
+              <!-- ---- Sol kolon: ekranda asılı kalan metin ---- -->
+              <div class="gallery__content" data-reveal-group>
+                <p class="overline" data-reveal="fade">Lüksü deneyimleyin</p>
+
+                <h2 class="gallery__title">
+                  <span class="mask"><span class="mask__inner">Sizinle Kalan</span></span>
+                  <span class="mask"><span class="mask__inner">Anlar</span></span>
+                </h2>
+
+                <p class="gallery__text text-lead" data-reveal>
+                  Her köşede yakalanan zarafet ve lüksü keşfedin.
+                </p>
+
+                <a class="btn btn--outline" href="#suites" data-reveal>
+                  Galeriyi Keşfet
+                  <span class="btn__icon" aria-hidden="true">&#8594;</span>
+                </a>
+              </div>
+
+              <!-- ---- Sağ kolon: asimetrik ızgara ----
+                   DOM sırası = z sırası değil; z-index CSS'te veriliyor.
+                   1 → sol üst, 2 → sol alt, 3 → sağda, dikeyde ortalı.  -->
+              <div class="gallery-images-wrapper" id="gallery-stack">
+
+                <figure class="g-photo g-photo--1">
+                  <span class="g-photo__inner">
+                    <img src="assets/img/gallery-01.png" width="1254" height="1254"
+                         loading="lazy" decoding="async"
+                         alt="Mum ışığıyla aydınlanan spa havuzu">
+                  </span>
+                </figure>
+
+                <figure class="g-photo g-photo--2">
+                  <span class="g-photo__inner">
+                    <img src="assets/img/gallery-02.png" width="1254" height="1254"
+                         loading="lazy" decoding="async"
+                         alt="Sarkıt lambanın altında hazırlanmış akşam yemeği masası">
+                  </span>
+                </figure>
+
+                <figure class="g-photo g-photo--3">
+                  <span class="g-photo__inner">
+                    <img src="assets/img/gallery-03.png" width="1254" height="1254"
+                         loading="lazy" decoding="async"
+                         alt="Gün batımına bakan teras">
+                  </span>
+                </figure>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             DENEYİMLER — 4'lü ızgara, hover'da kapak yerini videoya bırakır
+             ================================================================ -->
+        <section class="section experiences" id="experiences">
+          <div class="container">
+
+            <header class="experiences__head">
+              <div data-reveal-group>
+                <h2 class="experiences__title">
+                  <span class="mask"><span class="mask__inner">Sadece konaklamaktan</span></span>
+                  <span class="mask"><span class="mask__inner">fazlasını deneyimleyin</span></span>
+                </h2>
+              </div>
+
+              <div data-reveal-group>
+                <a class="btn btn--gold" href="#booking-form" data-reveal>
+                  Şimdi rezervasyon yapın
+                  <span class="btn__icon" aria-hidden="true">&#8594;</span>
+                </a>
+              </div>
+            </header>
+
+            <!-- Kartlar: stagger 0.15 ile girer (data-reveal-stagger) -->
+            <div class="exp-grid" data-reveal-group data-reveal-stagger="0.15">
+
+              <!-- VİDEO NOTU ------------------------------------------------
+                   Yer tutucu video dört kartta da aynı (tek indirme, cache'li).
+                   preload="none" → sayfa açılışında inmez, yalnızca hover'da
+                   oynatılır (js/main.js · initExperienceVideos).
+                   Alternatif yer tutucu: https://www.w3schools.com/html/mov_bbb.mp4
+                   Kendi videolarını koyarken <source src> değiştirmen yeterli.
+              ------------------------------------------------------------- -->
+
+              <article class="exp-card" data-reveal>
+                <div class="exp-card__media">
+                  <video class="exp-card__video" muted loop playsinline preload="none"
+                         aria-hidden="true" tabindex="-1">
+                    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                  </video>
+                  <img class="exp-card__cover" src="assets/img/exp-01-heritage.png"
+                       width="1254" height="1254" loading="lazy" decoding="async"
+                       alt="Tarihi sütunlu cephe">
+                  <span class="exp-card__overlay" aria-hidden="true"></span>
+                  <span class="exp-card__index" aria-hidden="true">01</span>
+                </div>
+                <div class="exp-card__body">
+                  <h3 class="exp-card__title">
+                    <a class="exp-card__link" href="#booking-form">Kültürel miras turları</a>
+                  </h3>
+                  <span class="exp-card__arrow" aria-hidden="true">&#8594;</span>
+                </div>
+              </article>
+
+              <article class="exp-card" data-reveal>
+                <div class="exp-card__media">
+                  <video class="exp-card__video" muted loop playsinline preload="none"
+                         aria-hidden="true" tabindex="-1">
+                    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                  </video>
+                  <img class="exp-card__cover" src="assets/img/exp-02-boat.png"
+                       width="1254" height="1254" loading="lazy" decoding="async"
+                       alt="Koyda demirlemiş yelkenli">
+                  <span class="exp-card__overlay" aria-hidden="true"></span>
+                  <span class="exp-card__index" aria-hidden="true">02</span>
+                </div>
+                <div class="exp-card__body">
+                  <h3 class="exp-card__title">
+                    <a class="exp-card__link" href="#booking-form">Tekne koy turları</a>
+                  </h3>
+                  <span class="exp-card__arrow" aria-hidden="true">&#8594;</span>
+                </div>
+              </article>
+
+              <article class="exp-card" data-reveal>
+                <div class="exp-card__media">
+                  <video class="exp-card__video" muted loop playsinline preload="none"
+                         aria-hidden="true" tabindex="-1">
+                    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                  </video>
+                  <img class="exp-card__cover" src="assets/img/exp-03-dining.png"
+                       width="1254" height="1254" loading="lazy" decoding="async"
+                       alt="Işıklandırılmış akşam yemeği servisi">
+                  <span class="exp-card__overlay" aria-hidden="true"></span>
+                  <span class="exp-card__index" aria-hidden="true">03</span>
+                </div>
+                <div class="exp-card__body">
+                  <h3 class="exp-card__title">
+                    <a class="exp-card__link" href="#booking-form">Lüks restoran deneyimi</a>
+                  </h3>
+                  <span class="exp-card__arrow" aria-hidden="true">&#8594;</span>
+                </div>
+              </article>
+
+              <article class="exp-card" data-reveal>
+                <div class="exp-card__media">
+                  <video class="exp-card__video" muted loop playsinline preload="none"
+                         aria-hidden="true" tabindex="-1">
+                    <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                  </video>
+                  <img class="exp-card__cover" src="assets/img/exp-04-event.png"
+                       width="1254" height="1254" loading="lazy" decoding="async"
+                       alt="Etkinlik salonu düzeni">
+                  <span class="exp-card__overlay" aria-hidden="true"></span>
+                  <span class="exp-card__index" aria-hidden="true">04</span>
+                </div>
+                <div class="exp-card__body">
+                  <h3 class="exp-card__title">
+                    <a class="exp-card__link" href="#booking-form">Etkinlik ve konferans</a>
+                  </h3>
+                  <span class="exp-card__arrow" aria-hidden="true">&#8594;</span>
+                </div>
+              </article>
+
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- ==================================================================
+           FOOTER — bülten, linkler, telif
+           ================================================================== -->
+      <footer class="footer" id="footer">
+        <div class="container">
+
+          <div class="footer__top" data-reveal-group data-reveal-stagger="0.12">
+
+            <div data-reveal>
+              <p class="footer__brand">AURUM</p>
+              <p class="footer__pitch">
+                Özel teklifler ve gizli indirimler için bültenimize katılın.
+              </p>
+
+              <form class="newsletter" id="newsletter-form" novalidate>
+                <label class="sr-only" for="newsletter-email">E-posta adresiniz</label>
+                <input class="newsletter__input" type="email" id="newsletter-email"
+                       name="email" placeholder="E-posta adresiniz"
+                       autocomplete="email" required>
+                <button class="newsletter__submit" type="submit" aria-label="Bültene katıl">
+                  <span aria-hidden="true">&#8594;</span>
+                </button>
+              </form>
+              <p class="newsletter__feedback" role="status" aria-live="polite"></p>
+            </div>
+
+            <nav class="footer__nav" aria-label="Alt bilgi bağlantıları" data-reveal>
+              <div>
+                <h2 class="footer__nav-title">Otel</h2>
+                <ul class="footer__list">
+                  <li><a class="footer__link" href="#heritage">Hakkımızda</a></li>
+                  <li><a class="footer__link" href="#suites">Süitler</a></li>
+                  <li><a class="footer__link" href="#experiences">Deneyimler</a></li>
+                  <li><a class="footer__link" href="#gallery">Galeri</a></li>
+                </ul>
+              </div>
+              <div>
+                <h2 class="footer__nav-title">Kurumsal</h2>
+                <ul class="footer__list">
+                  <li><a class="footer__link" href="#footer">Yardım</a></li>
+                  <li><a class="footer__link" href="#footer">Gizlilik Politikası</a></li>
+                  <li><a class="footer__link" href="#footer">Kullanım Koşulları</a></li>
+                  <li><a class="footer__link" href="#footer">İletişim</a></li>
+                </ul>
+              </div>
+            </nav>
+
+          </div>
+
+          <div class="footer__bottom" data-reveal-group>
+            <p data-reveal="fade">&copy; 2026 AURUM Hotel. Tüm hakları saklıdır.</p>
+            <div class="footer__socials" data-reveal="fade">
+              <a class="footer__link" href="#footer">Instagram</a>
+              <a class="footer__link" href="#footer">LinkedIn</a>
+              <a class="footer__link" href="#footer">Pinterest</a>
+            </div>
+          </div>
+
+        </div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>

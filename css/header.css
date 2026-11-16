@@ -1,0 +1,344 @@
+/* ==========================================================================
+   AURUM — header.css
+   Sabit (fixed) cam navigasyon · Açılır galeri menüsü · Mobil menü
+   --------------------------------------------------------------------------
+   z-index: --z-header (100) → hero UI'nin (10) ve 3D/video katmanının (1)
+   üstünde, mobil menü (--z-overlay 200) ise header'ın da üstünde kalır.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. HEADER KABI
+   ========================================================================== */
+.site-header {
+  /* SABİT (fixed), sticky DEĞİL — bilinçli:
+     sticky header normal akışta yer kaplar, hero'yu header yüksekliği
+     kadar aşağı iter ve 100svh'lik video ekrandan taşardı. Fixed olunca
+     hero viewport'un tam tepesinden başlar, header üstüne biner.
+     Ankra hedefleri style.css'teki scroll-padding-top ile korunuyor.
+     NOT: Bu yüzden header #smooth-content'in DIŞINDA durmalı — oradaki
+     will-change:transform, fixed'i viewport yerine kendine bağlardı. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-header);
+  /* Buzlu cam */
+  background-color: rgba(7, 7, 8, 0.45);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition:
+    background-color var(--dur-base) var(--ease-soft),
+    border-color var(--dur-base) var(--ease-soft),
+    box-shadow var(--dur-base) var(--ease-soft);
+}
+
+/* Sayfa kaydırılınca biraz daha opak ve gölgeli */
+.site-header.is-scrolled {
+  background-color: rgba(7, 7, 8, 0.86);
+  border-bottom-color: var(--line-gold);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.9);
+}
+
+/* backdrop-filter desteklenmeyen tarayıcıda katı zemin */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header { background-color: rgba(7, 7, 8, 0.94); }
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  min-height: var(--header-h);
+}
+
+
+/* ==========================================================================
+   2. MARKA
+   ========================================================================== */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: none;
+}
+
+/* Logo görseli — şeffaf zeminli altın lockup (işaret + AURUM yazısı).
+   Genişliği oran korunarak yükseklikten belirlenir. */
+.brand__logo {
+  display: block;
+  height: clamp(42px, 4.4vw, 58px);
+  width: auto;
+}
+
+
+/* ==========================================================================
+   3. MASAÜSTÜ NAVİGASYON
+   ========================================================================== */
+.nav { display: flex; align-items: center; }
+
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.2vw, 2.25rem);
+}
+
+.nav__item { position: relative; }
+
+.nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding-block: 0.5rem;
+  font-size: var(--fs-overline);
+  font-weight: 500;
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  background: none;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+/* Soldan büyüyen altın alt çizgi */
+.nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--gold-500);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+.nav__link:hover,
+.nav__link:focus-visible { color: var(--text-primary); }
+.nav__link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Ekranda görünen bölümün linki */
+.nav__link.is-active { color: var(--gold-300); }
+.nav__link.is-active::after { transform: scaleX(1); }
+
+.nav__chevron {
+  width: 13px;
+  height: 13px;
+  transition: transform var(--dur-fast) var(--ease-soft);
+}
+.nav__item.is-open .nav__chevron { transform: rotate(180deg); }
+
+
+/* ---- 3.1 Açılır alt menü (Galeri) ---- */
+.nav__submenu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  translate: -50% 0;
+  min-width: 190px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  background-color: rgba(16, 17, 22, 0.92);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--glass-border-gold);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition:
+    opacity var(--dur-fast) var(--ease-soft),
+    transform var(--dur-fast) var(--ease-soft);
+}
+.nav__item.is-open .nav__submenu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.nav__sublink {
+  display: block;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.nav__sublink:hover,
+.nav__sublink:focus-visible {
+  background-color: rgba(201, 169, 106, 0.12);
+  color: var(--gold-300);
+}
+
+
+/* ==========================================================================
+   4. SAĞ TARAF — TELEFON + CTA + HAMBURGER
+   ========================================================================== */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: none;
+}
+
+.header__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--fs-caption);
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.header__phone svg { width: 15px; height: 15px; }
+.header__phone:hover { color: var(--gold-300); }
+
+
+/* Hamburger — yalnızca dar ekranda */
+.header__burger {
+  display: none;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: border-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.header__burger:hover { border-color: var(--line-gold); color: var(--gold-300); }
+.header__burger svg { width: 20px; height: 20px; display: block; }
+.header__burger .icon-close { display: none; }
+
+
+/* ==========================================================================
+   5. MOBİL MENÜ
+   ========================================================================== */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--header-h) + 1.5rem) var(--gutter) 2.5rem;
+
+  background-color: rgba(7, 7, 8, 0.96);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+
+  /* Sağdan kayarak girer */
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform var(--dur-base) var(--ease-in-out-q),
+    visibility 0s linear var(--dur-base);
+}
+.mobile-menu.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  transition:
+    transform var(--dur-base) var(--ease-in-out-q),
+    visibility 0s;
+}
+
+.mobile-menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.mobile-menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  text-align: left;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.mobile-menu__link:hover,
+.mobile-menu__link.is-active { color: var(--gold-300); }
+.mobile-menu__link svg { width: 16px; height: 16px; flex: none; }
+.mobile-menu__item.is-open .mobile-menu__link svg { transform: rotate(180deg); }
+
+/* Mobil alt menü — açılır kapanır */
+.mobile-menu__sublist {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-in-out-q);
+}
+.mobile-menu__item.is-open .mobile-menu__sublist { grid-template-rows: 1fr; }
+.mobile-menu__sublist > div { overflow: hidden; }
+
+.mobile-menu__sublink {
+  display: block;
+  padding: 0.7rem 0 0.7rem 1rem;
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.mobile-menu__sublink:hover { color: var(--gold-300); }
+
+.mobile-menu__footer {
+  margin-top: auto;
+  padding-top: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.mobile-menu__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+.mobile-menu__phone svg { width: 16px; height: 16px; }
+
+
+/* ==========================================================================
+   6. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1080px) {
+  .nav,
+  .header__phone { display: none; }         /* Masaüstü menü gizlenir */
+  .header__burger { display: grid; }
+  /* Header CTA kaldırıldı; rezervasyon mobil menüde ve hero çubuğunda */
+}
+
+@media (min-width: 1081px) {
+  .mobile-menu { display: none; }
+}
+
+@media (max-width: 480px) {
+  .brand__logo { height: 38px; }
+  .site-header__inner { min-height: 72px; }
+}
+
+
+/* ==========================================================================
+   7. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .nav__link::after,
+  .nav__submenu,
+  .mobile-menu,
+  .mobile-menu__sublist { transition: none; }
+}

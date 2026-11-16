@@ -1,0 +1,184 @@
+/* ==========================================================================
+   AURUM — footer.css
+   AŞAMA 6b: Bülten kaydı + linkler + telif
+   ========================================================================== */
+
+.footer {
+  position: relative;
+  z-index: var(--z-content);
+  /* Sayfanın en koyu yüzeyi: antrasitten bir ton aşağı */
+  background-color: #000;
+  border-top: 1px solid var(--line-soft);
+  padding-block: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* Üst kenarda çok ince altın ışık — footer'ı sayfadan ayırır */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(560px, 60%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-gold), transparent);
+}
+
+
+/* ==========================================================================
+   1. ÜST BÖLÜM — bülten | linkler
+   ========================================================================== */
+.footer__top {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(2.5rem, 6vw, 6rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+
+/* ---- 1.1 Marka + bülten ---- */
+.footer__brand {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  letter-spacing: 0.22em;
+  color: var(--text-primary);
+}
+
+.footer__pitch {
+  max-width: 34ch;
+  margin-top: var(--space-md);
+  color: var(--text-secondary);
+}
+
+/* Minimalist e-posta alanı: yalnızca alt çizgi */
+.newsletter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 26rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--line-soft);
+  transition: border-color var(--dur-base) var(--ease-soft);
+}
+.newsletter:focus-within { border-color: var(--gold-500); }
+
+.newsletter__input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  color: var(--text-primary);
+  font-size: var(--fs-small);
+  letter-spacing: 0.02em;
+}
+.newsletter__input::placeholder { color: var(--text-muted); }
+.newsletter__input:focus { outline: none; }
+
+/* Ok ikonlu gönder butonu */
+.newsletter__submit {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-gold);
+  border-radius: 50%;
+  color: var(--gold-500);
+  transition:
+    background-color var(--dur-fast) var(--ease-soft),
+    color var(--dur-fast) var(--ease-soft),
+    transform var(--dur-base) var(--ease-out-expo);
+}
+.newsletter__submit:hover,
+.newsletter__submit:focus-visible {
+  background-color: var(--gold-500);
+  color: var(--text-on-gold);
+  transform: translateX(3px);
+}
+
+.newsletter__feedback {
+  min-height: 1.25rem;
+  margin-top: var(--space-xs);
+  font-size: var(--fs-caption);
+  color: var(--gold-300);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-soft);
+}
+.newsletter__feedback.is-visible { opacity: 1; }
+
+
+/* ---- 1.2 Link kolonları ---- */
+.footer__nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.footer__nav-title {
+  margin-bottom: var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--fs-overline);
+  font-weight: 500;
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+
+.footer__list { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+.footer__link {
+  position: relative;
+  width: fit-content;
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+/* Soldan büyüyen altın alt çizgi */
+.footer__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: var(--gold-500);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+.footer__link:hover { color: var(--text-primary); }
+.footer__link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+
+/* ==========================================================================
+   2. ALT ŞERİT — telif
+   ========================================================================== */
+.footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+  border-top: 1px solid var(--line-soft);
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.footer__bottom p { max-width: none; }
+
+.footer__socials { display: flex; gap: var(--space-md); }
+
+
+/* ==========================================================================
+   3. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 860px) {
+  .footer__top { grid-template-columns: 1fr; }
+  .newsletter  { max-width: none; }
+}
+
+@media (max-width: 480px) {
+  .footer__nav { grid-template-columns: 1fr; }
+  .footer__bottom { flex-direction: column; align-items: flex-start; }
+}

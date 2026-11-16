@@ -1,0 +1,455 @@
+/* ==========================================================================
+   AURUM — listing.css
+   Süit & paket listeleme sayfası (suitler.html)
+   --------------------------------------------------------------------------
+   Düzen: üstte arama özeti → solda filtre paneli (sticky) + sağda sonuçlar.
+   Kartlar ve filtreler js/listing.js tarafından veriden üretilir.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. SAYFA BAŞI
+   ========================================================================== */
+.page {
+  /* Header sabit (fixed) olduğu için içerik onun altından başlar */
+  padding-top: var(--header-h);
+  background-color: var(--bg-900);
+}
+
+.page-head {
+  position: relative;
+  padding-block: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+  border-bottom: 1px solid var(--line-soft);
+  overflow: hidden;
+}
+.page-head__glow { top: -40%; left: -10%; width: 44vw; }
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: var(--space-md);
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.breadcrumb a { color: var(--text-secondary); transition: color var(--dur-fast) var(--ease-soft); }
+.breadcrumb a:hover { color: var(--gold-300); }
+
+.page-title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.12;
+}
+.page-lead {
+  margin-top: var(--space-sm);
+  max-width: 56ch;
+  color: var(--text-secondary);
+}
+
+
+/* ---- 1.1 Arama çubuğu ("Aramayı Değiştir") ----
+   Ana sayfadaki çubuğun aynısı (datepicker.css). Orada hero'nun ortasında
+   duruyor ve kenar payını kendisi bırakıyor; burada zaten .container'ın
+   içinde olduğu için tam genişlik alır. */
+.booking-bar--page {
+  width: 100%;
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+/* Geri bildirim, çubuğun ÜSTÜNDEKİ açıklama metnine binmesin → altına */
+.booking-bar--page .booking-bar__feedback {
+  top: calc(100% + 0.6rem);
+  bottom: auto;
+}
+@media (max-width: 600px) {
+  .booking-bar--page { width: 100%; }
+}
+
+
+/* ==========================================================================
+   2. GÖVDE IZGARASI
+   ========================================================================== */
+.listing {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-block: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .listing { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   3. FİLTRE PANELİ
+   ========================================================================== */
+/* Panel ekranda sabit durur: sayfa kayarken yerinden oynamaz.
+   Kendisi ekrandan uzunsa (tüm filtre grupları açıkken olabiliyor)
+   sayfayla birlikte kaymak yerine KENDİ İÇİNDE kayar — böylece hem
+   yukarısı hem aşağısı her zaman erişilebilir kalır. */
+.filters {
+  position: sticky;
+  top: calc(var(--header-h) + 1rem);
+  max-height: calc(100vh - var(--header-h) - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;      /* Panelin sonu sayfayı sürüklemesin */
+  padding: clamp(1rem, 1.6vw, 1.4rem);
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+
+  /* İnce, temaya uygun kaydırma çubuğu (Firefox) */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 169, 106, 0.35) transparent;
+}
+/* WebKit tarafı */
+.filters::-webkit-scrollbar { width: 6px; }
+.filters::-webkit-scrollbar-track { background: transparent; }
+.filters::-webkit-scrollbar-thumb {
+  background-color: rgba(201, 169, 106, 0.35);
+  border-radius: var(--radius-pill);
+}
+.filters::-webkit-scrollbar-thumb:hover { background-color: rgba(201, 169, 106, 0.55); }
+
+/* Tek kolona düşen düzende yapışkanlık anlamsız → normal akışa döner */
+@media (max-width: 960px) {
+  .filters {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+.filters__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+.filters__title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.filter-group { padding-block: 1rem; border-bottom: 1px solid var(--line-soft); }
+.filter-group:last-of-type { border-bottom: 0; }
+
+.filter-group__title {
+  margin: 0 0 0.75rem;
+  max-width: none;
+  font-size: var(--fs-overline);
+  font-weight: 500;
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+
+/* Onay kutusu satırı */
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.check:hover { color: var(--text-primary); }
+.check input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              border-color var(--dur-fast) var(--ease-soft);
+}
+.check input:checked {
+  background-color: var(--gold-500);
+  border-color: var(--gold-500);
+}
+.check input:checked::after {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--text-on-gold);
+  border-bottom: 2px solid var(--text-on-gold);
+  transform: translateY(-1px) rotate(-45deg);
+}
+.check input:focus-visible { outline: 1px solid var(--gold-500); outline-offset: 2px; }
+.check__count { margin-left: auto; font-size: var(--fs-caption); color: var(--text-muted); }
+
+/* Fiyat kaydıracı */
+.range { padding-top: 0.25rem; }
+.range__values {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  font-size: var(--fs-caption);
+  color: var(--text-secondary);
+}
+.range input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--gold-700), var(--gold-500));
+  cursor: pointer;
+}
+.range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold-300);
+  border: 2px solid var(--bg-900);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.range input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--bg-900);
+  border-radius: 50%;
+  background: var(--gold-300);
+}
+
+
+/* ==========================================================================
+   4. SONUÇ BAŞLIĞI
+   ========================================================================== */
+.results__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+.results__count { margin: 0; max-width: none; font-size: var(--fs-small); color: var(--text-secondary); }
+.results__count b { color: var(--text-primary); font-weight: 500; }
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.sort select {
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  color-scheme: dark;
+  cursor: pointer;
+}
+.sort select:focus { outline: none; border-color: var(--gold-500); }
+.sort select option { background-color: var(--bg-800); }
+
+/* Aktif filtre rozetleri */
+.active-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: clamp(1rem, 2vw, 1.5rem); }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 169, 106, 0.1);
+  font-size: var(--fs-caption);
+  color: var(--gold-300);
+  cursor: pointer;
+}
+.chip:hover { background-color: rgba(201, 169, 106, 0.2); }
+.chip__x { font-size: 0.9rem; line-height: 1; }
+
+
+/* ==========================================================================
+   5. SONUÇ KARTLARI — yatay liste
+   ========================================================================== */
+.cards { display: flex; flex-direction: column; gap: clamp(0.85rem, 1.6vw, 1.25rem); }
+
+.rcard {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  background-color: var(--bg-800);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-soft),
+              box-shadow var(--dur-base) var(--ease-soft);
+}
+.rcard:hover {
+  border-color: var(--glass-border-gold);
+  box-shadow: var(--shadow-lg), 0 0 40px -22px rgba(201, 169, 106, 0.55);
+}
+
+.rcard__media { position: relative; overflow: hidden; background-color: var(--bg-700); }
+.rcard__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+.rcard:hover .rcard__media img { transform: scale(1.05); }
+
+.rcard__tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(10, 11, 14, 0.75);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line-gold);
+  font-size: var(--fs-overline);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-300);
+}
+
+.rcard__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  padding: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+.rcard__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.rcard__meta {
+  margin: 0.4rem 0 0;
+  max-width: none;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.rcard__desc {
+  margin: 0.6rem 0 0;
+  max-width: 52ch;
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+
+.rcard__features { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
+.feature {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-overline);
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.rcard__score {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.score__badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(201, 169, 106, 0.16);
+  border: 1px solid var(--line-gold);
+  font-weight: 500;
+  color: var(--gold-300);
+}
+
+/* ---- Fiyat kolonu ---- */
+.rcard__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.2rem;
+  padding-left: clamp(0.75rem, 1.5vw, 1.25rem);
+  border-left: 1px solid var(--line-soft);
+  text-align: right;
+  min-width: 170px;
+}
+.price__discount {
+  padding: 0.2rem 0.55rem;
+  margin-bottom: 0.2rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 169, 106, 0.16);
+  border: 1px solid var(--line-gold);
+  font-size: var(--fs-overline);
+  letter-spacing: 0.06em;
+  color: var(--gold-300);
+  white-space: nowrap;
+}
+.price__old {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+.price__new {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  color: var(--gold-300);
+  line-height: 1.1;
+}
+.price__unit { font-size: var(--fs-caption); color: var(--text-muted); }
+.price__total { font-size: var(--fs-caption); color: var(--text-secondary); }
+.rcard__cta { margin-top: 0.7rem; padding: 0.7rem 1.4rem; }
+
+@media (max-width: 860px) {
+  .rcard { grid-template-columns: 1fr; }
+  .rcard__media img { min-height: 190px; }
+  .rcard__body { grid-template-columns: 1fr; }
+  .rcard__price {
+    align-items: flex-start;
+    text-align: left;
+    padding-left: 0;
+    padding-top: 1rem;
+    border-left: 0;
+    border-top: 1px solid var(--line-soft);
+    min-width: 0;
+  }
+  .rcard__cta { width: 100%; }
+}
+
+
+/* ==========================================================================
+   6. BOŞ SONUÇ
+   ========================================================================== */
+.empty {
+  padding: clamp(2.5rem, 6vw, 4.5rem);
+  text-align: center;
+  border: 1px dashed var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+.empty__title { font-family: var(--font-display); font-size: 1.4rem; color: var(--text-primary); }
+.empty p { margin: 0.6rem auto 1.25rem; max-width: 42ch; color: var(--text-muted); }
+
+
+/* ==========================================================================
+   7. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .rcard, .rcard__media img, .check input, .chip { transition: none; }
+}

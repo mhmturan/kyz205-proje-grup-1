@@ -1,0 +1,578 @@
+/* ==========================================================================
+   AURUM — datepicker.css
+   Rezervasyon çubuğu alanları (destinasyon · tarih · misafir) + panelleri
+   --------------------------------------------------------------------------
+   Görünen kısımlar yalnızca tetikleyicidir; sunucuya gidecek gerçek değerler
+   gizli input'larda (#check-in, #check-out, #guests, #child-ages) durur.
+   Paneller çubuğun altında ya da (yer yoksa) ÜSTÜNDE açılır — .is-above
+   sınıfını JS ekler, çünkü çubuk ekranın alt bandında duruyor.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   0. GLASSMORPHISM REZERVASYON ÇUBUĞU (ana sayfa hero + suitler.html)
+   --------------------------------------------------------------------------
+   Cam zemin .glass (style.css) tarafından verilir; burada yalnızca
+   hap (pill) formu, ızgara yerleşimi ve alan tipografisi tanımlanır.
+   ========================================================================== */
+.booking-bar {
+  pointer-events: auto;                         /* Tıklanabilir ada     */
+  position: relative;
+  width: min(1080px, calc(100% - 2 * var(--gutter)));
+  display: grid;
+  /* Son kolon SABİT: "Rezervasyon Yap" butonunun sol kenarı çubuğun sol
+     kenarından tam 700px içeride başlasın diye (3 alan + 3×8px boşluk
+     kalan yeri paylaşır). Sağdaki 13.9px ise padding + 0.8px kenarlık. */
+  /* Alanlar eşit değil, ihtiyaçlarına göre paylaşır: tarih kutusu en geniş
+     (tarih aralığı + "x gece" rozeti), sonra destinasyon, sonra misafir. */
+  grid-template-columns: 1.12fr 1.45fr 1fr 250px;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.55rem 0.82rem 0.55rem 0.5rem;
+  border-radius: var(--radius-pill);
+  /* Cam efekti (istenen değerler) + style.css blur token'ı ile uyumlu */
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  backdrop-filter: blur(10px) saturate(150%);
+  background-color: rgba(16, 17, 22, 0.42);     /* Yarı saydam antrasit */
+  box-shadow: var(--shadow-lg), var(--glass-highlight);
+}
+.booking-bar__submit { padding-inline: 2rem; }
+
+/* Form geri bildirimi (hata / onay) */
+.booking-bar__feedback {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.75rem);
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: none;
+  white-space: nowrap;
+  font-size: var(--fs-caption);
+  color: var(--gold-300);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-soft);
+}
+.booking-bar__feedback.is-visible { opacity: 1; }
+
+
+/* ==========================================================================
+   1. ÇUBUKTAKİ ALANLAR
+   ========================================================================== */
+.bb-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.55rem clamp(0.7rem, 1vw, 0.9rem);
+  text-align: left;
+  min-width: 0;                       /* Grid taşmasını önler */
+}
+/* Alanlar arasında ince altın ayırıcı */
+.bb-field + .bb-field { border-left: 1px solid var(--line-gold); }
+
+.bb-label {
+  font-size: var(--fs-overline);
+  font-weight: 500;
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.bb-field:focus-within .bb-label,
+.bb-field:has([aria-expanded="true"]) .bb-label { color: var(--gold-300); }
+
+
+/* Etiketin altındaki satır: ikon + değer */
+.bb-control {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  min-width: 0;
+}
+.bb-trigger { cursor: pointer; }
+.bb-control:focus { outline: none; }
+
+.bb-icon {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  color: var(--gold-500);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.bb-trigger:hover .bb-icon,
+.bb-field:focus-within .bb-icon { color: var(--gold-300); }
+
+.bb-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.bb-value.is-empty { color: var(--text-muted); }
+.bb-trigger:hover .bb-value { color: var(--gold-300); }
+
+/* Tarih alanındaki "5 gece" rozeti */
+.bb-nights {
+  flex: none;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 169, 106, 0.16);
+  border: 1px solid var(--line-gold);
+  font-size: var(--fs-overline);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--gold-300);
+  white-space: nowrap;
+}
+
+/* Destinasyon alanındaki açılır ok — liste açıkken ters döner */
+.bb-caret {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  transition: transform var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.bb-trigger:hover .bb-caret { color: var(--gold-300); }
+.bb-trigger[aria-expanded="true"] .bb-caret { transform: rotate(180deg); color: var(--gold-300); }
+
+
+/* ==========================================================================
+   2. ORTAK PANEL KABUĞU
+   ========================================================================== */
+.bb-panel {
+  /* SABİT konum + gövde seviyesinde duruyor: header dahil her şeyin
+     üstünde açılsın diye. Koordinatları JS, ilgili alanın rect'inden
+     hesaplayıp inline yazıyor. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  text-align: left;
+
+  background-color: rgba(14, 15, 20, 0.97);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--glass-border-gold);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--dur-fast) var(--ease-soft),
+    transform var(--dur-fast) var(--ease-soft);
+}
+.bb-panel.is-open { opacity: 1; transform: translateY(0); }
+
+/* Aşağıda yer yoksa yukarı açılır (JS .is-above ekler; konumu yine JS verir) */
+.bb-panel.is-above { transform: translateY(8px); }
+.bb-panel.is-above.is-open { transform: translateY(0); }
+
+.bb-panel__title {
+  margin: 0 0 0.5rem;
+  max-width: none;
+  font-size: var(--fs-overline);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+
+.bb-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.bb-link {
+  font-size: var(--fs-caption);
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.bb-link:hover { color: var(--gold-300); }
+.bb-done { padding: 0.6rem 1.4rem; }
+
+
+/* ==========================================================================
+   3. DESTİNASYON PANELİ — popüler aramalar
+   ========================================================================== */
+.bb-panel--search {
+  /* Genişliği JS, alanın genişliğinden verir (min 280px) */
+  min-width: 280px;
+  padding: 0.9rem;
+}
+
+.bb-sugg { display: flex; flex-direction: column; gap: 0.15rem; }
+
+.bb-sugg__btn {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.6rem 0.65rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.bb-sugg__btn:hover,
+.bb-sugg__btn:focus-visible {
+  background-color: rgba(201, 169, 106, 0.12);
+  color: var(--text-primary);
+}
+
+.bb-sugg__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(201, 169, 106, 0.10);
+  border: 1px solid rgba(201, 169, 106, 0.22);
+  color: var(--gold-500);
+}
+.bb-sugg__icon svg { width: 15px; height: 15px; display: block; }
+
+.bb-sugg__label { flex: 1; min-width: 0; }
+
+.bb-sugg__check {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--gold-300);
+  opacity: 0;
+}
+/* Seçili seçenek: altın metin + onay işareti */
+.bb-sugg__btn.is-selected { color: var(--gold-300); }
+.bb-sugg__btn.is-selected .bb-sugg__check { opacity: 1; }
+.bb-sugg__btn.is-selected .bb-sugg__icon {
+  background-color: rgba(201, 169, 106, 0.2);
+  border-color: var(--line-gold);
+}
+.bb-sugg__btn:focus-visible { outline: 1px solid var(--gold-500); outline-offset: -1px; }
+
+
+/* ==========================================================================
+   4. MİSAFİR PANELİ — sayaçlar ve çocuk yaşları
+   ========================================================================== */
+.bb-panel--guests {
+  /* Genişliği JS, alanın genişliğinden verir (min 320px) */
+  min-width: 320px;
+  padding: 1rem;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: 0.7rem;
+}
+.stepper + .stepper { border-top: 1px solid var(--line-soft); }
+
+.stepper__label {
+  font-size: var(--fs-small);
+  color: var(--text-primary);
+}
+
+.stepper__ctrl {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+}
+
+.stepper__btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--gold-500);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.stepper__btn:hover:not(:disabled) {
+  background-color: var(--gold-500);
+  color: var(--text-on-gold);
+}
+.stepper__btn:disabled { color: rgba(244, 242, 238, 0.2); cursor: default; }
+
+.stepper__value {
+  min-width: 28px;
+  text-align: center;
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ---- Çocuk yaşları ---- */
+.ages {
+  margin-top: 0.4rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+}
+.ages__title {
+  margin: 0 0 0.6rem;
+  max-width: none;
+  font-size: var(--fs-overline);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+.ages__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.age-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.age-item__label {
+  flex: none;
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+.age-item__select {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-caption);
+  color-scheme: dark;
+  cursor: pointer;
+}
+.age-item__select:focus { outline: none; border-color: var(--gold-500); }
+.age-item__select.is-missing { border-color: rgba(220, 120, 90, 0.7); }
+.age-item__select option { background-color: var(--bg-800); }
+
+
+/* ==========================================================================
+   5. TAKVİM
+   ========================================================================== */
+.datepicker { padding: clamp(0.9rem, 1.6vw, 1.35rem); }
+
+.datepicker__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.datepicker__months {
+  display: flex;
+  flex: 1;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  justify-content: center;
+}
+
+.datepicker__nav {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.datepicker__nav:hover { border-color: var(--line-gold); color: var(--gold-300); }
+.datepicker__nav svg { width: 15px; height: 15px; display: block; }
+
+.dp-month { flex: 1; min-width: 0; }
+
+.dp-month__title {
+  margin: 0 0 0.75rem;
+  max-width: none;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+
+.dp-wd {
+  display: grid;
+  place-items: center;
+  height: 28px;
+  font-size: var(--fs-overline);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dp-pad { height: 38px; }
+
+.dp-day {
+  position: relative;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-soft),
+              color var(--dur-fast) var(--ease-soft);
+}
+.dp-day:hover:not(.is-disabled) {
+  background-color: rgba(201, 169, 106, 0.16);
+  color: var(--text-primary);
+}
+.dp-day.is-disabled {
+  color: rgba(244, 242, 238, 0.22);
+  cursor: default;
+  pointer-events: none;
+}
+.dp-day.is-today { box-shadow: inset 0 0 0 1px var(--line-gold); }
+.dp-day.is-between {
+  background-color: rgba(201, 169, 106, 0.14);
+  color: var(--text-primary);
+  border-radius: 0;
+}
+.dp-day.is-start,
+.dp-day.is-end {
+  background-color: var(--gold-500);
+  color: var(--text-on-gold);
+  font-weight: 500;
+}
+.dp-day.is-start { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.dp-day.is-end   { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.dp-day.is-start.is-end,
+.dp-day.is-start:not(.is-range-open) { border-radius: var(--radius-sm); }
+.dp-day.is-start.is-range-open { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+
+.datepicker__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: clamp(0.75rem, 1.4vw, 1.1rem);
+  padding-top: clamp(0.75rem, 1.4vw, 1.1rem);
+  border-top: 1px solid var(--line-soft);
+}
+
+.datepicker__summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  max-width: none;
+  font-size: var(--fs-small);
+  color: var(--text-secondary);
+}
+.dp-sum__date  { color: var(--text-primary); }
+.dp-sum__arrow { color: var(--text-muted); }
+.dp-sum__hint  { color: var(--text-muted); }
+.dp-sum__badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background-color: rgba(201, 169, 106, 0.16);
+  border: 1px solid var(--line-gold);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: var(--gold-300);
+}
+
+.datepicker__actions { display: flex; align-items: center; gap: var(--space-sm); }
+
+
+/* ==========================================================================
+   6. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* Çubuk iki sıraya düşer */
+  .booking-bar {
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+    gap: 0.25rem;
+  }
+  /* Üçüncü alan (misafir) tam satırı kaplar */
+  .bb-field:nth-child(3) { grid-column: 1 / -1; }
+  .booking-bar__submit {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 0.35rem;
+  }
+
+  .bb-field + .bb-field { border-left: 0; }
+  .bb-field:nth-child(2) { border-left: 1px solid var(--line-gold); }
+  .bb-field:nth-child(3) { border-top: 1px solid var(--line-gold); }
+}
+
+@media (max-width: 600px) {
+  .booking-bar { width: calc(100% - 2 * var(--gutter)); }
+  .booking-bar__feedback { white-space: normal; width: 100%; text-align: center; }
+}
+
+@media (max-width: 560px) {
+  .datepicker { padding: 0.85rem; }
+  .dp-day, .dp-pad { height: 34px; }
+  .datepicker__footer { flex-direction: column; align-items: stretch; }
+  .datepicker__actions { justify-content: space-between; }
+  .ages__grid { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   7. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .bb-panel, .dp-day, .bb-value, .bb-icon, .stepper__btn { transition: none; }
+}

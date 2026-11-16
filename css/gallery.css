@@ -1,0 +1,153 @@
+/* ==========================================================================
+   AURUM — gallery.css
+   AŞAMA 5 (v2): Sticky metin kolonu + "ana görselin içinden çıkan" 3'lü ızgara
+   --------------------------------------------------------------------------
+   MİMARİ:
+     .g-photo        → ızgaradaki NİHAİ yeri CSS belirler; GSAP yalnızca
+                       bu elemana x/y/scale yazar (başlangıçta 3. görselin
+                       üstüne taşır, scroll ile 0'a döndürür).
+     .g-photo__inner → çerçeve (yuvarlak köşe, gölge). Transform yazılmaz.
+     img             → yalnızca hover zoom'u. Üç katman ayrı olduğu için
+                       scroll animasyonu ile hover hiç çakışmaz.
+
+   NOT: Bu bölümde section'a overflow:hidden VERİLMEZ — sticky kolonu bozar.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. BÖLÜM VE DIŞ IZGARA
+   ========================================================================== */
+.gallery {
+  background-color: var(--bg-850);      /* Süitler (900) ile ritim farkı */
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  align-items: center;                  /* Metin kolonu görsellere göre ortalı */
+  gap: clamp(3rem, 7vw, 7rem);
+}
+
+
+/* ==========================================================================
+   2. SOL KOLON — GÖRSELLERE GÖRE ORTALANMIŞ İÇERİK
+   --------------------------------------------------------------------------
+   Sticky KALDIRILDI: metin scroll boyunca ekranda kayıyor, sonra çözülüp
+   sıçrıyordu. Artık ızgarayla birlikte hareket eder, dikeyde tam ortada.
+   ========================================================================== */
+.gallery__content {
+  align-self: center;                   /* Görsel bloğunun dikey merkezi */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.1rem, 2.2vw, 1.65rem);
+  max-width: 30rem;
+}
+
+.gallery__title {
+  font-size: clamp(2.1rem, 3.8vw, 3.25rem);
+  line-height: 1.12;
+}
+.gallery__title .mask {
+  display: block;
+  padding-bottom: 0.14em;               /* Alt uzantılar kesilmesin */
+  margin-bottom: -0.14em;
+}
+
+.gallery__text { max-width: 38ch; }
+
+
+/* ==========================================================================
+   3. SAĞ KOLON — ASİMETRİK IZGARA (nihai yerleşim)
+   --------------------------------------------------------------------------
+   ┌──────────┬───────────────┐
+   │ Görsel 1 │               │
+   ├──────────┤   Görsel 3    │  ← sağda, dikeyde ortalı, en büyük
+   │ Görsel 2 │               │
+   └──────────┴───────────────┘
+   ========================================================================== */
+.gallery-images-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;       /* Eşit kolonlar → eşit kareler */
+  gap: clamp(0.85rem, 1.6vw, 1.5rem);
+  width: 100%;
+}
+
+.g-photo { position: relative; }
+
+.g-photo--1 { grid-column: 1; grid-row: 1; z-index: 1; }
+.g-photo--2 { grid-column: 1; grid-row: 2; z-index: 2; }
+.g-photo--3 {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  z-index: 3;                           /* En üstte: diğer ikisini gizler */
+  align-self: center;                   /* Dikeyde ortalı */
+}
+
+/* Üçü de kare ve birbiriyle aynı boyutta (kolonlar eşit olduğu için) */
+.g-photo__inner { aspect-ratio: 1 / 1; }
+
+/* ---- Çerçeve ---- */
+.g-photo__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: var(--bg-800);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-lg);
+  transition: border-color var(--dur-base) var(--ease-soft);
+}
+
+.g-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+/* Hover: yalnızca iç görsel ölçeklenir → GSAP'ın transform'uyla çakışmaz */
+@media (hover: hover) {
+  .g-photo:hover .g-photo__inner { border-color: var(--glass-border-gold); }
+  .g-photo:hover img { transform: scale(1.06); }
+}
+
+/* Fotoğrafın üst kenarındaki ince ışık — kâğıt hissi */
+.g-photo__inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(246, 236, 212, 0.12);
+  pointer-events: none;
+}
+
+
+/* ==========================================================================
+   4. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1000px) {
+  .gallery__grid { grid-template-columns: 1fr; }
+  .gallery__content { max-width: none; }
+}
+
+@media (max-width: 700px) {
+  /* Izgara dikey akışa döner; "içinden çıkma" animasyonu da burada
+     devre dışı (js/main.js · matchMedia) → hepsi okunur kalır. */
+  .gallery-images-wrapper { grid-template-columns: 1fr; }
+  .g-photo--1 { grid-column: 1; grid-row: 1; }
+  .g-photo--2 { grid-column: 1; grid-row: 2; }
+  .g-photo--3 { grid-column: 1; grid-row: 3; align-self: auto; }
+}
+
+
+/* ==========================================================================
+   5. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .g-photo,
+  .g-photo img { transform: none !important; }
+  .g-photo__inner { transition: none; }
+}

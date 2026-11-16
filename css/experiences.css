@@ -1,0 +1,210 @@
+/* ==========================================================================
+   AURUM — experiences.css
+   AŞAMA 6a: Özel paketler ızgarası + hover'da kapak→video geçişi
+   --------------------------------------------------------------------------
+   Videolar preload="none" ile bekler, yalnızca hover/focus'ta oynatılır
+   (4 video'nun sayfa açılışında inmesi lüks hissi değil, fatura getirir).
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. BÖLÜM BAŞLIĞI
+   ========================================================================== */
+.experiences { background-color: var(--bg-900); }
+
+.experiences__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.experiences__title {
+  max-width: 18ch;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.12;
+}
+.experiences__title .mask {
+  display: block;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+
+/* ==========================================================================
+   2. IZGARA — 1x4 → 2x2 → tek kolon
+   ========================================================================== */
+.exp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 1.8vw, 1.75rem);
+}
+
+
+/* ==========================================================================
+   3. DENEYİM KARTI
+   ========================================================================== */
+.exp-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-800);
+  transition:
+    border-color var(--dur-base) var(--ease-soft),
+    box-shadow var(--dur-base) var(--ease-soft);
+}
+.exp-card:hover,
+.exp-card:focus-within {
+  border-color: var(--glass-border-gold);
+  box-shadow: var(--shadow-lg), 0 0 44px -20px rgba(201, 169, 106, 0.5);
+}
+
+/* ---- 3.1 Medya alanı: kapak + video üst üste ---- */
+.exp-card__media {
+  position: relative;
+  aspect-ratio: 1 / 1;          /* Kare görsel alanı */
+  overflow: hidden;
+  background-color: var(--bg-700);
+}
+
+.exp-card__cover,
+.exp-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Kapak üstte durur, hover'da yumuşakça kaybolur */
+.exp-card__cover {
+  z-index: 2;
+  opacity: 1;
+  transition: opacity 0.7s var(--ease-soft);
+}
+.exp-card__video {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-soft);
+}
+
+@media (hover: hover) {
+  .exp-card:hover .exp-card__cover { opacity: 0; }
+  .exp-card:hover .exp-card__video { opacity: 1; }
+}
+/* Klavye kullanıcısı da görsün */
+.exp-card:focus-within .exp-card__cover { opacity: 0; }
+.exp-card:focus-within .exp-card__video { opacity: 1; }
+
+/* Altın filtre — hover'da biner */
+.exp-card__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-soft);
+  background:
+    linear-gradient(to top, rgba(7, 7, 8, 0.55), transparent 55%),
+    linear-gradient(140deg, rgba(201, 169, 106, 0.28), rgba(201, 169, 106, 0.06) 60%);
+}
+.exp-card:hover .exp-card__overlay,
+.exp-card:focus-within .exp-card__overlay { opacity: 1; }
+
+/* Köşedeki sıra numarası */
+.exp-card__index {
+  position: absolute;
+  z-index: 4;
+  top: clamp(0.75rem, 1.4vw, 1.1rem);
+  left: clamp(0.75rem, 1.4vw, 1.1rem);
+  font-family: var(--font-display);
+  font-size: var(--fs-caption);
+  letter-spacing: 0.08em;
+  color: var(--gold-300);
+  opacity: 0.85;
+}
+
+/* ---- 3.2 Kart gövdesi ---- */
+.exp-card__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: clamp(1rem, 1.6vw, 1.35rem);
+}
+
+.exp-card__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+/* Başlık linki tüm kartı tıklanabilir yapar (erişilebilir yöntem) */
+.exp-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.exp-card__arrow {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition:
+    color var(--dur-fast) var(--ease-soft),
+    border-color var(--dur-fast) var(--ease-soft),
+    transform var(--dur-base) var(--ease-out-expo);
+}
+.exp-card:hover .exp-card__arrow,
+.exp-card:focus-within .exp-card__arrow {
+  color: var(--gold-300);
+  border-color: var(--line-gold);
+  transform: rotate(-45deg);        /* Ok yukarı-sağa döner */
+}
+
+
+/* ==========================================================================
+   4. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .exp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* 2x2 */
+}
+
+@media (max-width: 760px) {
+  .experiences__head { grid-template-columns: 1fr; align-items: start; }
+  .experiences__title { max-width: none; }
+}
+
+@media (max-width: 560px) {
+  /* Kare oran tek kolonda da makul yükseklikte kaldığı için medya
+     oranına dokunulmaz — kaynak hiçbir kırılımda kırpılmaz. */
+  .exp-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ==========================================================================
+   5. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .exp-card__cover,
+  .exp-card__video,
+  .exp-card__overlay,
+  .exp-card__arrow { transition: none; }
+  .exp-card:hover .exp-card__arrow { transform: none; }
+
+  /* Video hiç oynatılmayacağı için (js/main.js) kapak yerinde kalmalı,
+     yoksa boş bir kare açılırdı. Altın filtre yine de çalışır. */
+  .exp-card:hover .exp-card__cover,
+  .exp-card:focus-within .exp-card__cover { opacity: 1; }
+  .exp-card:hover .exp-card__video,
+  .exp-card:focus-within .exp-card__video { opacity: 0; }
+}

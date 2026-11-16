@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <!-- ===== Temel meta ===== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070708">
+  <meta name="color-scheme" content="dark">
+  <!-- Başlık ve açıklama js/detail.js tarafından seçilen süite göre güncellenir -->
+  <title>Süit Detayı — AURUM</title>
+  <meta name="description" content="AURUM süitinin tüm ayrıntıları: oda özellikleri, dahil olan hizmetler, iptal koşulları ve erken rezervasyon fiyatı.">
+
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap">
+
+  <!-- listing.css: sayfa başı, breadcrumb ve arama özeti şeridi burada tanımlı -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/listing.css">
+  <link rel="stylesheet" href="css/detail.css">
+
+  <script>document.documentElement.classList.add('js');</script>
+
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script defer src="js/main.js"></script>
+
+  <!-- Süit kataloğu (ortak veri) → detay mantığı -->
+  <script defer src="js/data.js"></script>
+  <script defer src="js/detail.js"></script>
+</head>
+
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <a class="skip-link" href="#detail">İçeriğe atla</a>
+
+  <!-- ==================================================================
+       HEADER — ana sayfadakinin aynısı
+       ================================================================== -->
+  <header class="site-header is-scrolled" id="site-header">
+    <div class="container site-header__inner">
+
+      <a class="brand" href="index.html" aria-label="AURUM — ana sayfa">
+        <img class="brand__logo" src="assets/img/logo.png"
+             width="360" height="202" alt="AURUM" decoding="async">
+      </a>
+
+      <nav class="nav" aria-label="Ana menü">
+        <ul class="nav__list">
+          <li class="nav__item"><a class="nav__link" href="index.html#hero">Anasayfa</a></li>
+          <li class="nav__item"><a class="nav__link" href="index.html#heritage">Hakkımızda</a></li>
+          <li class="nav__item"><a class="nav__link is-active" href="suitler.html">Odalar</a></li>
+
+          <li class="nav__item" data-dropdown>
+            <button class="nav__link" type="button"
+                    aria-expanded="false" aria-controls="menu-galeri" aria-haspopup="true">
+              Galeri
+              <svg class="nav__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="nav__submenu" id="menu-galeri">
+              <a class="nav__sublink" href="index.html#gallery">İç Mekan</a>
+              <a class="nav__sublink" href="index.html#gallery">Dış Mekan</a>
+              <a class="nav__sublink" href="index.html#gallery">Havuz</a>
+            </div>
+          </li>
+
+          <li class="nav__item"><a class="nav__link" href="index.html#experiences">Sıkça Sorulan Sorular</a></li>
+          <li class="nav__item"><a class="nav__link" href="index.html#footer">İletişim</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <a class="header__phone" href="tel:+902125550100">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/>
+          </svg>
+          <span>+90 212 555 01 00</span>
+        </a>
+
+        <button class="header__burger" type="button" id="menu-toggle"
+                aria-label="Menüyü aç" aria-expanded="false" aria-controls="mobile-menu">
+          <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+          </svg>
+          <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobil menü" aria-hidden="true">
+    <ul class="mobile-menu__list">
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="index.html#hero">Anasayfa</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="index.html#heritage">Hakkımızda</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="suitler.html">Odalar</a></li>
+
+      <li class="mobile-menu__item" data-dropdown>
+        <button class="mobile-menu__link" type="button"
+                aria-expanded="false" aria-controls="mobile-galeri">
+          Galeri
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+        <div class="mobile-menu__sublist" id="mobile-galeri">
+          <div>
+            <a class="mobile-menu__sublink" href="index.html#gallery">İç Mekan</a>
+            <a class="mobile-menu__sublink" href="index.html#gallery">Dış Mekan</a>
+            <a class="mobile-menu__sublink" href="index.html#gallery">Havuz</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="index.html#experiences">Sıkça Sorulan Sorular</a></li>
+      <li class="mobile-menu__item"><a class="mobile-menu__link" href="index.html#footer">İletişim</a></li>
+    </ul>
+
+    <div class="mobile-menu__footer">
+      <a class="mobile-menu__phone" href="tel:+902125550100">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8.1 9.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/>
+        </svg>
+        <span>+90 212 555 01 00</span>
+      </a>
+      <a class="btn btn--gold btn--block" href="index.html#booking-form">
+        Hemen Rezervasyon Yap
+        <span class="btn__icon" aria-hidden="true">&#8594;</span>
+      </a>
+    </div>
+  </div>
+
+
+  <main class="page">
+
+    <!-- Süit bulunamadıysa (geçersiz ?suit=) bu blok gösterilir -->
+    <section class="container notfound" id="notfound" hidden>
+      <h1 class="notfound__title">Aradığınız süit bulunamadı</h1>
+      <p>Bağlantı eskimiş olabilir. Tüm süit ve paketleri listeden inceleyebilirsiniz.</p>
+      <a class="btn btn--gold" href="suitler.html">Tüm Süitleri Gör</a>
+    </section>
+
+
+    <!-- İçeriğin tamamını js/detail.js doldurur -->
+    <div id="detail-root" hidden>
+
+      <section class="page-head">
+        <span class="glow-gold page-head__glow" aria-hidden="true"></span>
+
+        <div class="container">
+          <nav class="breadcrumb" aria-label="Site haritası">
+            <a href="index.html">Anasayfa</a>
+            <span aria-hidden="true">/</span>
+            <a href="suitler.html">Süitler &amp; Paketler</a>
+            <span aria-hidden="true">/</span>
+            <span id="crumb-name"></span>
+          </nav>
+
+          <!-- Galeri şeridi -->
+          <div class="detail-gallery" id="gallery"></div>
+        </div>
+      </section>
+
+
+      <div class="container detail" id="detail">
+
+        <!-- ---- Sol kolon: bilgi ---- -->
+        <article>
+          <div class="detail__badges" id="badges"></div>
+          <h1 class="detail__title" id="title"></h1>
+          <p class="detail__meta" id="meta"></p>
+          <p class="detail__score" id="score"></p>
+
+          <section class="block">
+            <h2 class="block__title">Bu süit hakkında</h2>
+            <p id="about"></p>
+          </section>
+
+          <section class="block">
+            <h2 class="block__title">Oda özellikleri</h2>
+            <ul class="tick-grid" id="features"></ul>
+          </section>
+
+          <section class="block">
+            <h2 class="block__title">Fiyata dahil olanlar</h2>
+            <ul class="tick-grid" id="included"></ul>
+          </section>
+
+          <section class="block">
+            <h2 class="block__title">Rezervasyon koşulları</h2>
+            <ul class="policy" id="policy"></ul>
+          </section>
+        </article>
+
+        <!-- ---- Sağ kolon: rezervasyon kartı ---- -->
+        <aside class="book-card" id="book-card" aria-label="Rezervasyon özeti"></aside>
+
+      </div>
+
+
+      <!-- ---- Benzer süitler ---- -->
+      <section class="container similar" id="similar" hidden>
+        <h2 class="similar__title">Benzer süitler</h2>
+        <div class="similar__grid" id="similar-grid"></div>
+      </section>
+
+    </div>
+
+
+    <!-- ==================================================================
+         FOOTER
+         ================================================================== -->
+    <footer class="footer" id="footer">
+      <div class="container">
+
+        <div class="footer__top" data-reveal-group data-reveal-stagger="0.12">
+
+          <div data-reveal>
+            <p class="footer__brand">AURUM</p>
+            <p class="footer__pitch">
+              Özel teklifler ve gizli indirimler için bültenimize katılın.
+            </p>
+
+            <form class="newsletter" id="newsletter-form" novalidate>
+              <label class="sr-only" for="newsletter-email">E-posta adresiniz</label>
+              <input class="newsletter__input" type="email" id="newsletter-email"
+                     name="email" placeholder="E-posta adresiniz"
+                     autocomplete="email" required>
+              <button class="newsletter__submit" type="submit" aria-label="Bültene katıl">
+                <span aria-hidden="true">&#8594;</span>
+              </button>
+            </form>
+            <p class="newsletter__feedback" role="status" aria-live="polite"></p>
+          </div>
+
+          <nav class="footer__nav" aria-label="Alt bilgi bağlantıları" data-reveal>
+            <div>
+              <h2 class="footer__nav-title">Otel</h2>
+              <ul class="footer__list">
+                <li><a class="footer__link" href="index.html#heritage">Hakkımızda</a></li>
+                <li><a class="footer__link" href="suitler.html">Süitler</a></li>
+                <li><a class="footer__link" href="index.html#experiences">Deneyimler</a></li>
+                <li><a class="footer__link" href="index.html#gallery">Galeri</a></li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="footer__nav-title">Kurumsal</h2>
+              <ul class="footer__list">
+                <li><a class="footer__link" href="index.html#footer">Yardım</a></li>
+                <li><a class="footer__link" href="index.html#footer">Gizlilik Politikası</a></li>
+                <li><a class="footer__link" href="index.html#footer">Kullanım Koşulları</a></li>
+                <li><a class="footer__link" href="index.html#footer">İletişim</a></li>
+              </ul>
+            </div>
+          </nav>
+
+        </div>
+
+        <div class="footer__bottom" data-reveal-group>
+          <p data-reveal="fade">&copy; 2026 AURUM Hotel. Tüm hakları saklıdır.</p>
+          <div class="footer__socials" data-reveal="fade">
+            <a class="footer__link" href="index.html#footer">Instagram</a>
+            <a class="footer__link" href="index.html#footer">LinkedIn</a>
+            <a class="footer__link" href="index.html#footer">Pinterest</a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </main>
+
+
+  <!-- Tam ekran görsel kutusu — galeri fotoğrafına tıklanınca açılır -->
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Fotoğraf görüntüleyici">
+    <button class="lightbox__close" type="button" id="lb-close" aria-label="Kapat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+           stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" id="lb-prev" aria-label="Önceki fotoğraf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <img id="lb-image" alt="">
+    <button class="lightbox__nav lightbox__nav--next" type="button" id="lb-next" aria-label="Sonraki fotoğraf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <p class="lightbox__count" id="lb-count"></p>
+  </div>
+
+</body>
+</html>

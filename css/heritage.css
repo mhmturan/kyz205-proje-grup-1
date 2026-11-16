@@ -1,0 +1,290 @@
+/* ==========================================================================
+   AURUM — heritage.css
+   AŞAMA 3 (v2): Ortalanmış cam panel · İstatistik satırı · Yüzen etiket
+   --------------------------------------------------------------------------
+   Katman mantığı:
+     .heritage-panel   → GSAP'ın giriş animasyonu (opacity + y). Başka hiçbir
+                         kural bu elemana transform yazmaz.
+     .heritage__media  → overflow:hidden (perde + yuvarlak köşe kırpması)
+     .heritage__badge  → media'nın DIŞINDA durur; içinde olsaydı
+                         overflow:hidden tarafından kırpılırdı.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. BÖLÜM VE PANEL
+   ========================================================================== */
+.heritage {
+  background-color: var(--bg-900);
+  overflow: hidden;                   /* Dekoratif ışıma taşmasın */
+}
+
+/* Sol üstte yumuşak altın aydınlatma — panelin arkasında derinlik */
+.heritage__glow {
+  top: -14%;
+  left: -12%;
+  width: 52vw;
+}
+
+.heritage-panel {
+  position: relative;
+  display: grid;
+  /* Sol kolon bilerek geniş: metinler kendi satır kırılımlarıyla rahat etsin */
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center;                /* Sol içerik dikeyde ortalanır */
+  gap: clamp(2rem, 4.5vw, 4.5rem);
+  /* Dört kenarda eşit iç boşluk (1440px'de 68px).
+     Görsel sağ kenara yaslandığı için sağdaki mesafeyi bu değer belirler;
+     panel yüksekliği de 460 (görsel) + 2×68 = ~596px olur. */
+  padding: clamp(1.75rem, 4.7vw, 4.25rem);
+  border-radius: 24px;
+
+  /* Ana zeminden cam efektiyle ayrışır */
+  background-color: rgba(255, 255, 255, 0.035);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: var(--shadow-lg), var(--glass-highlight);
+}
+
+/* Üst kenarda ince altın ışık şeridi */
+.heritage-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  width: 76%;
+  height: 1px;
+  opacity: 0.55;
+  background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+}
+
+/* JS varken panel gizli başlar (GSAP opacity/y sürer) → sıçrama olmaz */
+.js .heritage-panel { opacity: 0; }
+
+/* backdrop-filter yoksa katı zemine düş */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .heritage-panel { background-color: var(--bg-800); }
+}
+
+
+/* ==========================================================================
+   2. SOL KOLON — İÇERİK
+   ========================================================================== */
+.heritage__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.1rem, 2.2vw, 1.6rem);
+  /* Dikey padding yok: panel yüksekliğini bu kolon belirliyordu */
+  padding-block: 0;
+  padding-inline: clamp(0.25rem, 1.2vw, 1rem);
+}
+
+.heritage__title {
+  font-size: clamp(1.75rem, 2.9vw, 2.6rem);
+  line-height: 1.1;
+  /* Başlık ile paragraf arasında ekstra nefes (flex gap'e eklenir) */
+  margin-bottom: clamp(0.25rem, 0.8vw, 0.65rem);
+}
+/* Maske satırları: alt uzantılar (ğ, ş, y) kesilmesin diye padding telafisi */
+.heritage__title .mask {
+  display: block;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+/* Satır kırılımları HTML'de <br class="br-lg"> ile sabitlendiği için
+   burada ch sınırı YOK — sınır olsaydı araya kendi kırılımını sokardı. */
+.heritage__text {
+  max-width: none;
+  color: var(--text-secondary);
+}
+
+/* Sabit satır kırılımları yalnızca geniş ekranda geçerli; dar ekranda
+   <br> gizlenir ve metin doğal akışına döner. */
+@media (max-width: 900px) {
+  .br-lg { display: none; }
+}
+
+
+/* ---- 2.1 İstatistik satırı ---- */
+.heritage__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  width: 100%;
+  padding-block: clamp(0.5rem, 1.5vw, 1rem);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* İkon kutusu — altın konturlu */
+.stat__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-sm);
+  background-color: rgba(201, 169, 106, 0.07);
+  color: var(--gold-500);            /* SVG stroke="currentColor" */
+}
+.stat__icon svg { width: 21px; height: 21px; display: block; }
+
+.stat__text {
+  margin: 0;
+  max-width: none;
+  font-size: var(--fs-caption);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+/* Rakam vurgusu — serif ve altın */
+.stat__text strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--gold-300);
+}
+
+.heritage__cta { margin-top: var(--space-2xs); }
+
+
+/* ==========================================================================
+   3. SAĞ KOLON — GÖRSEL VE YÜZEN ETİKET
+   ========================================================================== */
+.heritage__visual {
+  position: relative;                 /* Etiketin referans kutusu */
+  width: 100%;
+  max-width: 460px;                   /* Görsel paneli domine etmesin */
+  justify-self: end;                  /* Sağ kenara yaslanır */
+}
+
+.heritage__media {
+  position: relative;
+  aspect-ratio: 1 / 1;                /* Kare görsel alanı */
+  width: 100%;
+  overflow: hidden;                   /* Perde + köşe kırpması */
+  border-radius: 16px;                /* Panelin 24px'ine uyumlu iç yarıçap */
+  background-color: var(--bg-800);
+  box-shadow: var(--shadow-md);
+}
+
+.heritage__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                  /* Kare kaynak birebir oturur */
+  will-change: transform;             /* GSAP açılış ölçeklemesi */
+}
+
+/* Çerçeveden ofsetli ince altın kontur — klasik lüks detayı */
+.heritage__media::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  z-index: 1;
+  border: 1px solid rgba(201, 169, 106, 0.22);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* ---- 3.1 Yüzen etiket: "1998'den Beri" ----
+   .heritage__media'nın DIŞINDA; içinde olsaydı overflow:hidden kırpardı. */
+.heritage__badge {
+  position: absolute;
+  left: clamp(-1.25rem, -2vw, -2rem);
+  bottom: clamp(1.25rem, 3vw, 2.25rem);
+  z-index: 4;
+
+  display: grid;
+  place-content: center;
+  gap: 1px;
+  /* Kare değil, basık dikdörtgen: dikeyde dar, yatayda geniş */
+  min-width: clamp(132px, 11.5vw, 164px);
+  padding: clamp(0.65rem, 1vw, 0.85rem) clamp(1rem, 1.4vw, 1.35rem);
+  text-align: center;
+
+  border-radius: var(--radius-md);
+  background-color: rgba(10, 11, 14, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--glass-border-gold);
+  box-shadow: 0 22px 48px -18px rgba(0, 0, 0, 0.85);
+
+  transform-origin: center;
+}
+/* JS varken sıfırdan büyür (GSAP back.out) → sıçrama olmaz */
+.js .heritage__badge { opacity: 0; transform: scale(0); }
+
+.heritage__badge-year {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+  line-height: 1.1;
+  color: var(--gold-300);
+}
+.heritage__badge-label {
+  font-size: var(--fs-overline);
+  letter-spacing: var(--ls-overline);
+  text-transform: uppercase;
+  color: var(--gold-500);
+}
+
+
+/* ==========================================================================
+   4. RESPONSIVE
+   ========================================================================== */
+@media (max-width: 900px) {
+  .heritage-panel {
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 6vw, 3rem);
+  }
+  /* Yalnızca yatay padding: dikey boşluğu panel veriyor */
+  .heritage__content {
+    padding-block: 0;
+    padding-inline: clamp(0.25rem, 2vw, 1rem);
+    align-items: flex-start;
+  }
+  .heritage__text { max-width: none; }
+  .heritage__visual { justify-self: center; margin-inline: auto; }
+  /* Tek kolonda etiket panelin dışına taşmasın */
+  .heritage__badge { left: 1rem; }
+}
+
+@media (max-width: 560px) {
+  .heritage-panel { padding: 1.1rem; border-radius: 18px; }
+
+  /* .btn'in white-space:nowrap'i butonu 291px'e kilitliyor ve tek kolonlu
+     ızgarada tüm kolonu o genişliğe zorluyordu → görsel panelin sağ iç
+     boşluğunu yiyordu. Dar ekranda buton daralabilsin. */
+  .heritage__cta {
+    white-space: normal;
+    padding-inline: 1.5rem;
+  }
+  .heritage__media { border-radius: 12px; }
+  .heritage__media::after { inset: 8px; }
+  .heritage__stats { gap: 1.25rem; }
+  .heritage__badge { min-width: 118px; bottom: 0.9rem; left: 0.9rem; }
+}
+
+
+/* ==========================================================================
+   5. HAREKET AZALTMA
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  /* Perdeyi style.css gizliyor; burada panel ve etiket görünür sabitlenir */
+  .js .heritage-panel { opacity: 1; }
+  .js .heritage__badge { opacity: 1; transform: none; }
+  .heritage__media img { transform: none !important; }
+}
