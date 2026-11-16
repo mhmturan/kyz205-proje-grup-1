@@ -111,6 +111,7 @@
     function onReady() {
       duration = heroVideo.duration || 0;
       heroVideo.classList.add('is-ready');
+      if (typeof wake === 'function') wake();   /* Hazır olmadan gelen girdiyi uygula */
     }
     heroVideo.addEventListener('loadeddata', onReady);
     /* Yerel/önbellekli video bu satıra gelmeden hazır olabilir; o durumda
@@ -170,6 +171,7 @@
     function addDelta(dy) {
       target = clamp(target + dy / SCRUB_DISTANCE, 0, 1);
       if (target > 0.001) started = true;
+      wake();
     }
     function onWheel(e) { addDelta(e.deltaY); e.preventDefault(); }
     function onTouchStart(e) { touchY = e.touches[0] ? e.touches[0].clientY : 0; }
@@ -219,36 +221,77 @@
       ScrollTrigger.refresh();
     }
 
-    /* ---- 2.6 Kare döngüsü ---- */
-    function frame() {
-      current += (target - current) * 0.18;   /* yumuşak takip */
+    /* ---- 2.6 Kare döngüsü ----
+       PERFORMANS: Döngü yalnızca girdi geldiğinde çalışır, hedefe
+       yerleşince durur (boşta CPU harcamaz). Seek yalnızca kare
+       değiştiğinde yapılır; stil yazımları değer değiştiğinde yapılır. */
+    var FPS = 24;                 /* hero.mp4 kare hızı */
+    var lastFrameIdx = -1;
+    var lastT = -1, lastQ = -1, lastCue = null;
+    var running = false;
 
-      if (duration > 0) seekTo(current * duration);
+    function wake() {
+      if (running || finished) return;
+      running = true;
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function frame() {
+      var diff = target - current;
+      current = Math.abs(diff) < 0.0005 ? target : current + diff * 0.18;
+
+      if (duration > 0) {
+        /* Aynı kareye tekrar seek etmek decoder'ı boşuna meşgul eder */
+        var idx = Math.round(current * duration * FPS);
+        if (idx !== lastFrameIdx) {
+          lastFrameIdx = idx;
+          seekTo(Math.min(idx / FPS, duration - 0.001));
+        }
+      }
 
       heroVideo.style.transform = 'scale(' + (1 + current * 0.06) + ')';
 
       /* Başlık bloğu ilk %35'te bulanıklaşarak silinir.
-         Rezervasyon çubuğu bu bloğun DIŞINDA olduğu için etkilenmez. */
+         Rezervasyon çubuğu bu bloğun DIŞINDA olduğu için etkilenmez.
+         blur() pahalıdır → yalnızca değer değişince yaz, 0'da kaldır. */
       if (content) {
         var t = 1 - clamp(current / 0.35, 0, 1);
-        content.style.opacity = String(t);
-        content.style.transform = 'translateY(' + ((1 - t) * -24) + 'px)';
-        content.style.filter = 'blur(' + ((1 - t) * 10) + 'px)';
+        t = Math.round(t * 100) / 100;
+        if (t !== lastT) {
+          lastT = t;
+          content.style.opacity = String(t);
+          content.style.transform = 'translate3d(0,' + ((1 - t) * -24) + 'px,0)';
+          content.style.filter = (t === 1 || t === 0) ? '' : 'blur(' + ((1 - t) * 10) + 'px)';
+          content.style.visibility = t === 0 ? 'hidden' : '';
+        }
       }
 
-      if (cue) cue.style.opacity = started ? '0' : '1';
+      if (cue && lastCue !== started) {
+        lastCue = started;
+        cue.style.opacity = started ? '0' : '1';
+      }
 
       /* Mesaj son %18'de belirir */
       if (tagline) {
         var q = clamp((current - 0.82) / 0.18, 0, 1);
-        tagline.style.opacity = String(q);
-        tagline.style.transform = 'translateY(' + ((1 - q) * 20) + 'px)';
-        tagline.style.filter = 'blur(' + ((1 - q) * 8) + 'px)';
+        q = Math.round(q * 100) / 100;
+        if (q !== lastQ) {
+          lastQ = q;
+          tagline.style.opacity = String(q);
+          tagline.style.transform = 'translate3d(0,' + ((1 - q) * 20) + 'px,0)';
+          tagline.style.filter = (q === 0 || q === 1) ? '' : 'blur(' + ((1 - q) * 8) + 'px)';
+        }
       }
 
       if (bar) bar.style.transform = 'scaleX(' + current + ')';
 
-      if (target >= 1 && current > 0.995) { finish(); return; }
+      if (target >= 1 && current > 0.995) { running = false; finish(); return; }
+
+      /* Hedefe ulaşıldı → döngüyü durdur, yeni girdi gelince wake() açar */
+      if (current === target && (duration > 0 || target === 0)) {
+        running = false;
+        return;
+      }
       rafId = requestAnimationFrame(frame);
     }
 
@@ -268,7 +311,7 @@
     lockScroll();
     attach();
     skipHeroIntro = finish;        /* Header linkleri girişi atlayabilsin */
-    rafId = requestAnimationFrame(frame);
+    wake();                        /* İlk kareyi çiz; sonra girdi bekler */
   }
 
 
